@@ -531,26 +531,7 @@ class Cell implements Comparable<Cell> {
     }
 
     if (getMouseGridspace().x == xPos && getMouseGridspace().y == yPos && mousePressed) {
-      println("Temperature: " + map(temperature, 0, 1, -10, 30) + " C");
-      //println("Temperature: " + temperature);
-      println("Moisture: " + map(moisture, 0, 1, 0, 100) + "%");
-      println("River Flow: " + (flow * 100) + "%");
-      if (water == false) {
-        if (finalElevation > 0.5) {
-          println("Elevation: " + map(sq((finalElevation - 0.5) * 2), 0, 1, 0, 8000) + " ft");
-        } else {
-          println("Elevation: " + (-map(sq((finalElevation - 0.5) * 2), 0, 1, 0, 8000) + " ft"));
-        }
-      } else {
-        println("Elevation: " + 0 + " ft");
-      }
-      println("Climate: " + climate);
-      println("Water: " + water);
-      println("Color: " + red(currColor) + ", " + green(currColor) + ", " + blue(currColor));
-      fill(255, 0, 0);
-      println();
-    }
-    if (river) {
+      focusCell = this;
       fill(255, 0, 0);
     }
 

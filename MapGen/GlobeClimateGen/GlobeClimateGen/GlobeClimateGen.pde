@@ -3,7 +3,8 @@
 //Whether or not you want to save the map to a text file 
 //Default: true
 boolean saveToFile = false;
-int wahCount = 0;
+boolean saving = false;
+Cell focusCell = new Cell();
 //Filepath if you would like to load a map from a file. Leave blank to generate a new map.
 //Default: ""
 //Template: "Maps/16.0/1000x500/seed/Map_1000x500.map";
@@ -69,7 +70,16 @@ float truMouseY;
 OpenSimplexNoise noise;
 OpenSimplexNoise bigNoise;
 
+void settings(){
+  size(displayWidth - 100, displayHeight - 100);
+}
+
 void setup () {
+  background(0);
+  textSize(200);
+  fill(255);
+  text("Loading...", width/2 - 500, height/2);
+  delay(5);
   json = loadJSONObject("Parameters.txt");
   grdWidth = json.getInt("GridWidth");
   grdHeight = json.getInt("GridHeight");
@@ -113,7 +123,6 @@ void setup () {
     bigNoise = noise;
   }
   println(seed);
-  size(1500, 750);
   println("All Done!");
   noStroke();
   xPan = width/2;
@@ -122,6 +131,10 @@ void setup () {
 }
 
 void draw () {
+  if(saving){
+    grid.getImages();
+    exit();
+  }
   truMouseX = (mouseX + xPan - width/2)/scale;
   truMouseY = (mouseY + yPan - height/2)/scale;
 
@@ -141,18 +154,7 @@ void draw () {
   if (keyPressed && key == 'r') {
     xPan = width/2;
     yPan = height/2;
-  }
-  if (keyPressed && key == 's') {
-    println("Saving...");
-    grid.getImages();
-    //try {
-    //  Serializer.serialization("test.txt", grid);
-    //} 
-    //catch (Exception e) {
-    //  println(e);
-    //  println("FAILED TO SERIALIZE");
-    //}
-    exit();
+    scale = 1;
   }
 
 
@@ -163,6 +165,31 @@ void draw () {
   scale(scale);
   grid.display();
   popMatrix();
+  fill(0);
+  textSize(25);
+  text("Temperature: " + map(focusCell.temperature, 0, 1, -10, 30) + " C", 10, 25);
+  //println("Temperature: " + temperature);
+  text("Moisture: " + map(focusCell.moisture, 0, 1, 0, 100) + "%", 10, 50);
+  text("River Flow: " + (focusCell.flow * 100) + "%", 10, 75);
+  if (focusCell.water == false) {
+    if (focusCell.finalElevation > 0.5) {
+      text("Elevation: " + map(sq((focusCell.finalElevation - 0.5) * 2), 0, 1, 0, 8000) + " ft", 10, 100);
+    } else {
+      text("Elevation: " + (-map(sq((focusCell.finalElevation - 0.5) * 2), 0, 1, 0, 8000) + " ft"), 10, 100);
+    }
+  } else {
+    text("Elevation: " + 0 + " ft", 10, 100);
+  }
+  text("Climate: " + focusCell.climate, 10, 125);
+  text("Color: " + red(focusCell.currColor) + ", " + green(focusCell.currColor) + ", " + blue(focusCell.currColor), 10, 150);
+  
+  if (keyPressed && key == 's') {
+    saving = true;
+    background(0);
+    textSize(200);
+    fill(255);
+    text("Saving...", width/2 - 500, height/2);
+  }
 }
 
 void mouseWheel (MouseEvent event) {
