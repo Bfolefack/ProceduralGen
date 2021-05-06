@@ -9,9 +9,14 @@ public class Grid {
   float noiseSca;
   float noisePow;
   float xPos, yPos;
+  float randomPlateChance;
+  float polarPlateChance;
 
   int gridWidth, gridHeight;
   int localSeed;
+  int continentalPlates;
+  int oceanicPlates;
+  int randomPlates;
 
   PVector possibR;
 
@@ -34,7 +39,7 @@ public class Grid {
     loadJSON(jj);
   }
 
-  Grid(float x_, float y_, int gw_, int gh_, float wL_, int s_, float nD_, float nS_, float nP_) {
+  Grid(float x_, float y_, int gw_, int gh_, float wL_, int s_, float nD_, float nS_, float nP_, int oP_, int coP_, int rdP_, float rdPC_, float pPC_) {
     cells = new Cell[gw_][gh_];
     gridWidth = gw_;
     gridHeight = gh_;
@@ -45,6 +50,13 @@ public class Grid {
     noiseSca = nS_;
     noisePow = nP_;
     localSeed = s_;
+
+    oceanicPlates = oP_;
+    continentalPlates = coP_;
+    randomPlates = rdP_;
+    randomPlateChance = rdPC_;
+    polarPlateChance = pPC_;
+
     possibR = new PVector(Integer.MAX_VALUE, Integer.MIN_VALUE);
     println("Initializing");
     for (int i = 0; i < gridWidth; i++) {
@@ -90,24 +102,24 @@ public class Grid {
       }
     }
 
-    plates = new Plate[22];
+    plates = new Plate[continentalPlates + oceanicPlates + randomPlates + 2];
 
     for (int i = 0; i < plates.length - 2; i++) {
-      if (i < 4) {
+      if (i < oceanicPlates) {
         int x = (int)random(gridWidth);
         int y = yValues.get((int)random(yValues.size()));
         plates[i] = new Plate(color(random(255), random(255), random(255)), false, random(-0.3, 0.2), this);
         cells[x][y].activate(plates[i]);
-      } else if (i < 10) {
+      } else if (i < continentalPlates + oceanicPlates) {
         int x = (int)random(gridWidth);
         int y = yValues.get((int)random(yValues.size()));
-        plates[i] = new Plate(color(random(255), random(255), random(255)), true, random(0.0, 0.4), this);
+        plates[i] = new Plate(color(random(255), random(255), random(255)), true, random(-0.1, 0.4), this);
         cells[x][y].activate(plates[i]);
       } else {
         int x = (int)random(gridWidth);
         int y = yValues.get((int)random(yValues.size()));
         boolean b;
-        if (random(1) < 0.4) {
+        if (random(1) < randomPlateChance) {
           b = false;
         } else {
           b = true;
@@ -119,7 +131,7 @@ public class Grid {
     }
 
     boolean b;
-    if (random(1) < 0.7) {
+    if (random(1) < polarPlateChance) {
       b = false;
     } else { 
       b = true;
@@ -130,7 +142,7 @@ public class Grid {
       cells[i][0].activate(plates[plates.length - 2]);
     }
 
-    if (random(1) < 0.7) {
+    if (random(1) < polarPlateChance) {
       b = false;
     } else { 
       b = true;
