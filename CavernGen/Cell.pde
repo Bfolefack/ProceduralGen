@@ -13,7 +13,7 @@ class Cell {
 
   Cell(int x_, int y_) {
     gridPos = new PVector(x_, y_);
-    if (random(0, 1) < .45) {
+    if (random(0, 1) < .43) {
       filled = true;
     } else {
       filled = false;

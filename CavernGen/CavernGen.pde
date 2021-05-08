@@ -1,7 +1,7 @@
 float gridScale;
 Grid griddle;
 void setup () {
-  size(1300, 750);
+  size(800, 600);
   gridScale = 5;
   background(0);
   textSize(200);

@@ -21,10 +21,8 @@ class Cavern {
         //myCells = fakeCells;
         fakeCells.clear();
       }
-      println(myCells.size());
     } else {
       cavernAvailible = false;
-      println("wah");
     }
   }
 
