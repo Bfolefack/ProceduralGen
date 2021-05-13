@@ -225,7 +225,7 @@ public class Grid {
     }
     biggestLake.ocean();
     for (int i = lakes.size() - 1; i >= 0; i--) {
-      if (lakes.get(i) != biggestLake) {
+      if (lakes.get(i).lake.size() < biggestLake.lake.size()/2) {
         lakes.remove(i).drain();
       }
     }
@@ -245,14 +245,43 @@ public class Grid {
         cells[i][j].smoothTemp(this);
       }
     }
-
-    println("Getting Moisture");
-    for (int i = 0; i < gridHeight; i++) {
-      for (int j = 0; j < gridWidth; j++) {
-        cells[j][i].setBoundaryMoisture(this);
+    println("Divoting Elevaiton"); 
+    PriorityQueue<Cell> open = new PriorityQueue<Cell>();
+    for (int i = 0; i < gridWidth; i++) {
+      for (int j = 0; j < gridHeight; j++) {
+        if (cells[i][j].water) {
+          open.add(cells[i][j]);
+          cells[i][j].slopeClosed = true;
+          cells[i][j].distToSea = 0;
+        }
+      }
+    }
+    int count = 0;
+    while (open.size() > 0) {
+      Cell c = open.remove();
+      c.slopeNeighbors(c.divotedFinalElevation, open, this);
+      count++;
+    }
+    println(count);
+    
+    
+    biggest = Integer.MIN_VALUE; 
+    for (int i = 0; i < gridWidth; i++) {
+      for (int j = 0; j < gridHeight; j++) {
+        if (cells[i][j].distToSea > biggest) {
+          biggest = cells[i][j].distToSea;
+        }
+      }
+    }
+    println(biggest);
+    for (int i = 0; i < gridWidth; i++) {
+      for (int j = 0; j < gridHeight; j++) {
+        cells[i][j].finalDistToSea = map(cells[i][j].distToSea, 0, biggest, 0, 1);
       }
     }
 
+
+    println("Getting Moisture");
     for (int k = 0; k < 1; k++) {
       for (int i = 0; i < gridHeight; i++) {
         for (int j = 0; j < gridWidth; j++) {
@@ -281,6 +310,19 @@ public class Grid {
       }
     }
 
+    for (int k = 0; k < 1; k++) {
+      for (int i = 0; i < gridHeight; i++) {
+        for (int j = 0; j < gridWidth; j++) {
+          if (cells[j][i].windDir.x == 1) {
+            cells[j][i].getTrueMoisture(this);
+          }
+          if (cells[gridWidth - j - 1][i].windDir.x == -1) {
+            cells[gridWidth - j - 1][i].getMoisture(this);
+          }
+        }
+      }
+    }
+
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
         cells[i][j].smoothMoisture(this);
@@ -301,55 +343,6 @@ public class Grid {
     //}
 
     println("Forming Rivers");
-    PriorityQueue<Cell> open = new PriorityQueue<Cell>();
-    //for (int i = 0; i < gridWidth; i++) {
-    //  open.add(cells[i][0]);
-    //  cells[i][0].slopeClosed = true;
-    //  open.add(cells[i][gridHeight - 1]);
-    //  cells[i][gridHeight - 1].slopeClosed = true;
-    //}
-    //for (int i = 0; i < gridHeight; i++) {
-    //  open.add(cells[0][i]);
-    //  cells[0][i].slopeClosed = true;
-    //  open.add(cells[gridWidth - 1][i]);
-    //  cells[gridWidth - 1][i].slopeClosed = true;
-    //}
-
-    for (int i = 0; i < gridWidth; i++) {
-      for (int j = 0; j < gridHeight; j++) {
-        if (cells[i][j].ocean) {
-          open.add(cells[i][j]);
-          cells[i][j].slopeClosed = true;
-        }
-      }
-    }
-
-    int count = 0;
-    while (open.size() > 0) {
-      Cell c = open.remove();
-      c.slopeNeighbors(c.divotedFinalElevation, open, this);
-      count++;
-    }
-    println(count);
-
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    cells[i][j].getLowestNeighbor(this);
-    //  }
-    //}
-
-    //ArrayList<Cell> highCells = new ArrayList<Cell>();
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    if (cells[i][j].finalElevation >= 0.7 && cells[i][j].finalElevation < 0.9) {
-    //      highCells.add(cells[i][j]);
-    //    }
-    //  }
-    //}
-
-    //for (int i = 0; i < 50; i++) {
-    //  highCells.remove((int) random(50)).flowRiver(this);
-    //}
 
     PriorityQueue<Cell> riverCells = new PriorityQueue<Cell>(Collections.reverseOrder());
     for (int i = 0; i < gridWidth; i++) {

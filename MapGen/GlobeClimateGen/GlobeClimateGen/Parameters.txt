@@ -1,6 +1,6 @@
 {
-  "GridWidth": 1500,
-  "GridHeight": 750,
+  "GridWidth": 750,
+  "GridHeight": 375,
   "ContinentalPlates": 3,
   "OceanicPlates": 2,
   "RandomPlates": 8,

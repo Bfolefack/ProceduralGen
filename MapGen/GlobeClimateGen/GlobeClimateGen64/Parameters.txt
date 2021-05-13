@@ -1,11 +1,11 @@
 {
-  "GridWidth": 1500,
-  "GridHeight": 750,
-  "ContinentalPlates": 4,
-  "OceanicPlates": 7,
-  "RandomPlates": 10,
+  "GridWidth": 750,
+  "GridHeight": 375,
+  "ContinentalPlates": 5,
+  "OceanicPlates": 6,
+  "RandomPlates": 4,
   "RandomPlateChance": 0.7,
   "RandomPolarPlateChance": 0.7,
-  "AutoGen": 5,
+  "AutoGen": 0,
   "Seed": 0
 }

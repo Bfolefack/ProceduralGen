@@ -53,6 +53,7 @@ JSONObject json;
 //1870626560 750x375
 //1977817088 750 x 375
 //-132052992 750 x 375
+//-1530804992 750x375
 //This modifies how much the nois is stretched towards the poles
 int warpL = 16;
 Grid grid;
@@ -131,6 +132,9 @@ void setup () {
 }
 
 void draw () {
+  if(frameCount == 0){
+    
+  }
   if(saving){
     grid.getImages();
     exit();

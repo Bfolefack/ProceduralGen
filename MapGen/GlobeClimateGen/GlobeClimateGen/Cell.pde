@@ -7,6 +7,7 @@ class Cell implements Comparable<Cell> {
   PVector windDir;
   int size;
   int borders;
+  int distToSea = Integer.MAX_VALUE;
 
   color currColor;
   color watershedColor;
@@ -36,6 +37,7 @@ class Cell implements Comparable<Cell> {
   float ice;
   float divotedFinalElevation;
   float flow;
+  float finalDistToSea;
 
   String climate;
   ArrayList<String> flowIDs = new ArrayList<String>();
@@ -459,6 +461,9 @@ class Cell implements Comparable<Cell> {
       } else {
         currColor = color(255);
       }
+      if (finalElevation > 0.8) {
+        currColor = color(0);
+      }
     }
   }
 
@@ -564,6 +569,7 @@ class Cell implements Comparable<Cell> {
   }
 
   void slopeNeighbors(float target, PriorityQueue<Cell> active, Grid grid) {
+    int lowestDistToSea = Integer.MAX_VALUE;
     for (int i = -1; i < 2; i++)
       for (int j = -1; j < 2; j++) {
         Cell cel = grid.getCell(xPos + i, yPos + j);
@@ -574,7 +580,30 @@ class Cell implements Comparable<Cell> {
           if (cel.finalElevation < target)
             cel.divotedFinalElevation = target;
         }
+        if (cel.distToSea < lowestDistToSea) {
+          lowestDistToSea = cel.distToSea;
+        }
       }
+    distToSea = lowestDistToSea + 1;
+  }
+  
+  void slopeNeighbors(float target, PriorityQueue<Cell> active, Grid grid) {
+    int lowestDistToSea = Integer.MAX_VALUE;
+    for (int i = -1; i < 2; i++)
+      for (int j = -1; j < 2; j++) {
+        Cell cel = grid.getCell(xPos + i, yPos + j);
+        if (cel.size > 0 && !cel.slopeClosed) {
+          active.add(cel);
+          cel.slopeClosed = true;
+          cel.lowestNeighbor = this;
+          if (cel.finalElevation < target)
+            cel.divotedFinalElevation = target;
+        }
+        if (cel.distToSea < lowestDistToSea) {
+          lowestDistToSea = cel.distToSea;
+        }
+      }
+    distToSea = lowestDistToSea + 1;
   }
 
   void calculateTemperature(Grid grid) {
@@ -691,120 +720,23 @@ class Cell implements Comparable<Cell> {
     return new PVector(x, y);
   }
 
-  void setBoundaryMoisture(Grid grid) {
-    if (water) {
-      moistened = true;
-    }
-    if (water) {
-      map(sqrt(temperature), 0, 1, 0.3, 1);
-      //println(moisture);
-    } else {
-      //moisture = 0;
-    }
-  }
-
   void getMoisture(Grid grid) {
     float lat = abs((grid.gridHeight/2) - yPos) * 2;
-    lat = map(lat, 0, grid.gridHeight, 0, 0.8);
-    lat += 0.2;
+    lat = map(lat, 0, grid.gridHeight, 0, 0.6);
+    lat += 0.4;
     if (water == true) {
-      moisture = sqrt(temperature);
-      //println(moisture);
-    }
-    if (!water)
-    if (abs(windDir.x) != 0) {
-      float avgElevation = 0;
-      float avgExtremeElevation = 0;
-      float extremeCount = 0;
-      float waterPercentage = 0;
-      float avgTemperature = 0;
-      int count = 0;
-      int landCount = 0;
-      float addedMoisture = 0;
-      for (int i = 0; i < grid.gridWidth * lat; i++) {
-        Cell cel = grid.getCell(xPos + (i * (int) windDir.x), yPos + ((int)(bigNoise.eval((xPos + (i * (int) windDir.x)) * 0.05, yPos * 0.05) * grid.gridHeight/20)));
-        if (cel.size > 0) {
-          if (water)
-            if (cel.water && addedMoisture < sqrt(temperature)/4)
-              //addedMoisture += 0.05;
-              print();
-            else
-              waterPercentage += cel.moisture * 2;
-          else
-            if (cel.water) 
-              waterPercentage += 1;
-            else 
-            waterPercentage += cel.moisture * 2;
-
-          avgTemperature += cel.temperature;
-          if (cel.water == false) {
-            float landElevation = (cel.finalElevation - 0.5) * 2;
-            if (landElevation < 0) {
-              landElevation = 0;
-            }
-            avgElevation += sq((landElevation));
-            landCount++;
-            if (sq(landElevation) > 0.6) {
-              avgExtremeElevation += sq(landElevation);
-              extremeCount++;
-            }
-            if (sq(landElevation) > 0.9) {
-              break;
-            }
-          }
-          count++;
-        }
-      }
-      if (count > 0) {
-        waterPercentage /= count;
-        avgTemperature /= count;
-      }
-      if (landCount > 0)
-        avgElevation /= landCount;
-
-      if (extremeCount != 0)
-        avgExtremeElevation /= extremeCount;
-      avgElevation *= (1 - avgExtremeElevation);
-      if (avgElevation > 0.2) {
-        map(avgElevation, 0, 1, 0.4, 1);
-      }
-      moisture += waterPercentage * map(avgTemperature, 0, 1, 0.4, 0.8) * (1 - avgElevation) + addedMoisture;
-      //if (water == true) {
-      //  moisture += 25.0/grid.gridWidth;
-      //  if (moisture > sqrt(temperature)) {
-      //    moisture = sqrt(temperature);
-      //  }
-      //}
-
-      lat = abs((grid.gridHeight/2) - yPos) * 2;
-      lat = map(lat, 0, grid.gridHeight, 0, 90);
-      if (lat <= 15) {
-        lat = map(lat, 0, 10, 1, 0);
-        moisture += (moisture + 0.05) * 0.4 * lat;
-      }
-      if (lat >= 20 && lat <= 40) {
-        if (lat >= 30) {
-          lat = map(lat, 30, 40, 1, 0);
-        } else {
-          lat = map(lat, 20, 30, 0, 1);
-        }
-        moisture -=  (moisture + 0.05) * 0.4 * lat;
-      }
-      if (lat >= 60) {
-        if (lat >= 75) {
-          lat = map(lat, 75, 90, 1, 0);
-        } else {
-          lat = map(lat, 60, 75, 0, 1);
-        }
-        moisture += (moisture + 0.05) * 0.2 * lat;
-      }
-      if (moisture > 1)
-        moisture = 1;
-      else if (moisture < 0)
-        moisture = 0;
-      moistened = true;
-      moisture = pow(abs(moisture), 1.2);
+      moisture = pow(temperature, 0.7);
     } else {
+      moisture = finalDistToSea;
+    }
+
+    lat = abs((grid.gridHeight/2) - yPos) * 2;
+    lat = map(lat, 0, grid.gridHeight, 0, 90);
+    moistened = true;
+    moisture = pow(abs(moisture), 1.2);
+
+
+    if (windDir.x == 0) {
       float moistTotal = 0;
       int count = 0;
       for (int i = -grid.gridHeight/25; i < grid.gridHeight/25; i++) {
@@ -820,8 +752,157 @@ class Cell implements Comparable<Cell> {
       }
       moisture = moistTotal/count;
     }
-    if (water)
-      moisture += 0.05;
+
+
+    if (lat <= 15) {
+      lat = map(lat, 0, 10, 1, 0);
+      moisture += (moisture + 0.05) * 0.4 * lat;
+    }
+    if (lat >= 20 && lat <= 40) {
+      if (lat >= 30) {
+        lat = map(lat, 30, 40, 1, 0);
+      } else {
+        lat = map(lat, 20, 30, 0, 1);
+      }
+      moisture -=  (moisture + 0.05) * 0.4 * lat;
+    }
+    if (lat >= 60) {
+      if (lat >= 75) {
+        lat = map(lat, 75, 90, 1, 0);
+      } else {
+        lat = map(lat, 60, 75, 0, 1);
+      }
+      moisture += (moisture + 0.05) * 0.2 * lat;
+    }
+
+
+    if (moisture > 1)
+      moisture = 1;
+    else if (moisture < 0)
+      moisture = 0;
+  }
+
+
+  void getTrueMoisture(Grid grid) {
+    //  float lat = abs((grid.gridHeight/2) - yPos) * 2;
+    //  lat = map(lat, 0, grid.gridHeight, 0, 0.6);
+    //  lat += 0.4;
+    //  if (water == true) {
+    //    moisture = sqrt(temperature);
+    //    //println(moisture);
+    //  } else {
+    //    moisture = 0;
+    //  }
+    //  if (!water)
+    //  if (abs(windDir.x) != 0) {
+    //    float avgElevation = 0;
+    //    float avgExtremeElevation = 0;
+    //    float extremeCount = 0;
+    //    float waterPercentage = 0;
+    //    float avgTemperature = 0;
+    //    int count = 0;
+    //    int landCount = 0;
+    //    float addedMoisture = 0;
+    //    for (int i = 0; i < grid.gridWidth * lat; i++) {
+    //      Cell cel = grid.getCell(xPos + (i * (int) windDir.x), yPos + (int) (i * windDir.y/2) + ((int)(bigNoise.eval((xPos + (i * (int) windDir.x)) * 0.05, yPos * 0.05) * grid.gridHeight/20)));
+    //      if (cel.size > 0 && cel.moisture != 0) {
+    //        if (water)
+    //          if (cel.water)
+    //            waterPercentage = 1;
+    //          else
+    //            waterPercentage += cel.moisture;
+    //        else
+    //          if (cel.water) 
+    //            waterPercentage += 1;
+    //          else 
+    //          waterPercentage += sqrt(cel.moisture) * 1.2;
+
+    //        avgTemperature += cel.temperature;
+    //        if (cel.water == false) {
+    //          float landElevation = (cel.finalElevation - 0.5) * 2;
+    //          if (landElevation < 0) {
+    //            landElevation = 0;
+    //          }
+    //          avgElevation += sq((landElevation));
+    //          landCount++;
+    //          if (sq(landElevation) > 0.6) {
+    //            avgExtremeElevation += sq(landElevation);
+    //            extremeCount++;
+    //          }
+    //          if (sq(landElevation) > 0.9) {
+    //            break;
+    //          }
+    //        }
+    //        count++;
+    //      }
+    //    }
+    //    if (count > 0) {
+    //      waterPercentage /= count;
+    //      avgTemperature /= count;
+    //    }
+    //    if (landCount > 0)
+    //      avgElevation /= landCount;
+
+    //    if (extremeCount != 0)
+    //      avgExtremeElevation /= extremeCount;
+    //    avgElevation *= (1 - avgExtremeElevation);
+    //    if (avgElevation > 0.2) {
+    //      map(avgElevation, 0, 1, 0.4, 1);
+    //    }
+    //    moisture += waterPercentage * map(avgTemperature, 0, 1, 0.4, 0.8) * (1 - avgElevation) + addedMoisture;
+    //    //if (water == true) {
+    //    //  moisture += 25.0/grid.gridWidth;
+    //    //  if (moisture > sqrt(temperature)) {
+    //    //    moisture = sqrt(temperature);
+    //    //  }
+    //    //}
+
+    //    lat = abs((grid.gridHeight/2) - yPos) * 2;
+    //    lat = map(lat, 0, grid.gridHeight, 0, 90);
+    //    if (lat <= 15) {
+    //      lat = map(lat, 0, 10, 1, 0);
+    //      moisture += (moisture + 0.05) * 0.4 * lat;
+    //    }
+    //    if (lat >= 20 && lat <= 40) {
+    //      if (lat >= 30) {
+    //        lat = map(lat, 30, 40, 1, 0);
+    //      } else {
+    //        lat = map(lat, 20, 30, 0, 1);
+    //      }
+    //      moisture -=  (moisture + 0.05) * 0.4 * lat;
+    //    }
+    //    if (lat >= 60) {
+    //      if (lat >= 75) {
+    //        lat = map(lat, 75, 90, 1, 0);
+    //      } else {
+    //        lat = map(lat, 60, 75, 0, 1);
+    //      }
+    //      moisture += (moisture + 0.05) * 0.2 * lat;
+    //    }
+    //    if (moisture > 1)
+    //      moisture = 1;
+    //    else if (moisture < 0)
+    //      moisture = 0;
+    //    moistened = true;
+    //    moisture = pow(abs(moisture), 1.2);
+    //  } else {
+    //    float moistTotal = 0;
+    //    int count = 0;
+    //    for (int i = -grid.gridHeight/25; i < grid.gridHeight/25; i++) {
+    //      for (int j = -grid.gridHeight/25; j < grid.gridHeight/25; j++) {
+    //        if (!(i == 0 && j == 0)) {
+    //          Cell cel = grid.getCell(xPos + i, yPos + j);
+    //          if (cel.size > 0) {
+    //            moistTotal += cel.moisture;
+    //            count++;
+    //          }
+    //        }
+    //      }
+    //    }
+    //    moisture = moistTotal/count;
+    //  }
+    //  if (water)
+    //    moisture += 0.05;
   }
 
   void smoothMoisture(Grid grid) {
@@ -862,9 +943,9 @@ class Cell implements Comparable<Cell> {
           climate = "Tropical Monsoon";
         } else if (temperature > 0.5) {
           climate = "Tropical Savannah";
-        } else if (temperature > 0.3) {
+        } else if (temperature > 0.4) {
           climate = "Humid Subtropical";
-        } else if (temperature > 0.2) {
+        } else if (temperature > 0.3) {
           climate = "Continental";
         } else {
           climate = "Subarctic";
@@ -874,9 +955,9 @@ class Cell implements Comparable<Cell> {
           climate = "Tropical Monsoon";
         } else if (temperature > 0.6) {
           climate = "Tropical Savannah";
-        } else if (temperature > 0.3) {
+        } else if (temperature > 0.5) {
           climate = "Humid Subtropical";
-        } else if (temperature > 0.2) {
+        } else if (temperature > 0.3) {
           climate = "Continental";
         } else {
           climate = "Subarctic";
@@ -884,9 +965,9 @@ class Cell implements Comparable<Cell> {
       } else if (moisture > 0.3) {
         if (temperature > 0.7) {
           climate = "Tropical Savannah";
-        } else if (temperature > 0.4) {
+        } else if (temperature > 0.5) {
           climate = "Humid Subtropical";
-        } else if (temperature > 0.3) {
+        } else if (temperature > 0.4) {
           climate = "Continental";
         } else if (temperature > 0.15) {
           climate = "Subarctic";
@@ -896,7 +977,7 @@ class Cell implements Comparable<Cell> {
           climate = "Ice Cap";
         }
       } else if (moisture > 0.2) {
-        if (temperature > 0.7) {
+        if (temperature > 0.6) {
           climate = "Semi-Arid";
         } else if (temperature > 0.5) {
           climate = "Steppe";
