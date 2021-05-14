@@ -246,11 +246,14 @@ public class Grid {
       }
     }
     println("Divoting Elevaiton"); 
+
     PriorityQueue<Cell> open = new PriorityQueue<Cell>();
+    ArrayList<Cell> open2 = new ArrayList<Cell>();
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
         if (cells[i][j].water) {
           open.add(cells[i][j]);
+          open2.add(cells[i][j]);
           cells[i][j].slopeClosed = true;
           cells[i][j].distToSea = 0;
         }
@@ -262,9 +265,22 @@ public class Grid {
       c.slopeNeighbors(c.divotedFinalElevation, open, this);
       count++;
     }
-    println(count);
-    
-    
+
+    open = new PriorityQueue<Cell>();
+
+
+    count = 0;
+    ArrayList<Cell> temp = new ArrayList<Cell>();
+    while (open2.size() > 0) {
+      println(open2.size());
+      for (int i = open.size() - 1; i >= 0; i--) {
+        open2.remove(i).continentalDist(temp, this);
+      }
+      open2 = temp;
+      temp = new ArrayList<Cell>();
+    }
+
+
     biggest = Integer.MIN_VALUE; 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
@@ -310,16 +326,9 @@ public class Grid {
       }
     }
 
-    for (int k = 0; k < 1; k++) {
-      for (int i = 0; i < gridHeight; i++) {
-        for (int j = 0; j < gridWidth; j++) {
-          if (cells[j][i].windDir.x == 1) {
-            cells[j][i].getTrueMoisture(this);
-          }
-          if (cells[gridWidth - j - 1][i].windDir.x == -1) {
-            cells[gridWidth - j - 1][i].getMoisture(this);
-          }
-        }
+    for (int i = 0; i < gridHeight; i++) {
+      for (int j = 0; j < gridWidth; j++) {
+        cells[j][i].setMoisture();
       }
     }
 
