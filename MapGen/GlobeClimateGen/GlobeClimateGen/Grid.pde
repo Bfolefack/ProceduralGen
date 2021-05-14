@@ -325,13 +325,6 @@ public class Grid {
         }
       }
     }
-
-    for (int i = 0; i < gridHeight; i++) {
-      for (int j = 0; j < gridWidth; j++) {
-        cells[j][i].setMoisture();
-      }
-    }
-
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
         cells[i][j].smoothMoisture(this);
