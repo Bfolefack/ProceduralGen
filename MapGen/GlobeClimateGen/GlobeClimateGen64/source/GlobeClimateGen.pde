@@ -15,15 +15,15 @@ String loadFile = "";
 int autoGen = 0;
 //Dimensions of your grid
 //Default: 1000
-int grdWidth = 1500;
+int grdWidth = 750;
 //Default: 500
-int grdHeight = 750;
+int grdHeight = 375;
 //Size of the pixels on your grid
 //Default: 1
 int gridScale = 1;
 //Controls how jagged your coastlines are
 //Default: 2
-float noiseDetail = 2.2;
+float noiseDetail = 2.4;
 //Controls the size of all structures on your map(this one's a bit wonky)
 //Default: -0.5
 float noiseScale = -0.5;
@@ -79,7 +79,7 @@ void setup () {
   textSize(200);
   fill(255);
   text("Loading...", width/2 - 500, height/2);
-  delay(15);
+  delay(5);
   json = loadJSONObject("Parameters.txt");
   grdWidth = json.getInt("GridWidth");
   grdHeight = json.getInt("GridHeight");

@@ -35,15 +35,15 @@ String loadFile = "";
 int autoGen = 0;
 //Dimensions of your grid
 //Default: 1000
-int grdWidth = 1500;
+int grdWidth = 750;
 //Default: 500
-int grdHeight = 750;
+int grdHeight = 375;
 //Size of the pixels on your grid
 //Default: 1
 int gridScale = 1;
 //Controls how jagged your coastlines are
 //Default: 2
-float noiseDetail = 2.2f;
+float noiseDetail = 2.4f;
 //Controls the size of all structures on your map(this one's a bit wonky)
 //Default: -0.5
 float noiseScale = -0.5f;
@@ -99,7 +99,7 @@ public void setup () {
   textSize(200);
   fill(255);
   text("Loading...", width/2 - 500, height/2);
-  delay(15);
+  delay(5);
   json = loadJSONObject("Parameters.txt");
   grdWidth = json.getInt("GridWidth");
   grdHeight = json.getInt("GridHeight");
@@ -893,7 +893,7 @@ class Cell implements Comparable<Cell> {
   public void calcFinalElevation() {
     elevation = pow(elevation, 1.2f);
     if (noise >= 0 && noise <= 1 && elevation >= 0 && elevation <= 1) {
-      finalElevation = noise * 0.5f + elevation * 0.5f;
+      finalElevation = noise * 0.4f + elevation * 0.6f;
     } else {
       int e = 1/0;
     }
@@ -1131,11 +1131,11 @@ class Cell implements Comparable<Cell> {
           climate = "Ice Cap";
         }
       } else if (moisture > 0.1f) {
-        if (temperature > 0.6f) {
+        if (temperature > 0.7f) {
           climate = "Hot Desert";
-        } else if (temperature > 0.5f) {
+        } else if (temperature > 0.6f) {
           climate = "Semi-Arid";
-        } else if (temperature > 0.4f) {
+        } else if (temperature > 0.5f) {
           climate = "Steppe";
         } else if (temperature > 0.3f) {
           climate = "Continental";
@@ -1147,13 +1147,13 @@ class Cell implements Comparable<Cell> {
           climate = "Ice Cap";
         }
       } else if (moisture > 0.05f) {
-        if (temperature > 0.6f) {
+        if (temperature > 0.7f) {
           climate = "Hot Desert";
-        } else if (temperature > 0.5f) {
+        } else if (temperature > 0.6f) {
           climate = "Semi-Arid";
-        } else if (temperature > 0.4f) {
+        } else if (temperature > 0.5f) {
           climate = "Steppe";
-        } else if (temperature > 0.3f) {
+        } else if (temperature > 0.4f) {
           climate = "Continental";
         } else if (temperature > 0.2f) {
           climate = "Subarctic";

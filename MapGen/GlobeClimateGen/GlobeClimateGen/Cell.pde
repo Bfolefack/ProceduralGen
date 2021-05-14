@@ -672,7 +672,7 @@ class Cell implements Comparable<Cell> {
   void calcFinalElevation() {
     elevation = pow(elevation, 1.2);
     if (noise >= 0 && noise <= 1 && elevation >= 0 && elevation <= 1) {
-      finalElevation = noise * 0.5 + elevation * 0.5;
+      finalElevation = noise * 0.4 + elevation * 0.6;
     } else {
       int e = 1/0;
     }
@@ -910,11 +910,11 @@ class Cell implements Comparable<Cell> {
           climate = "Ice Cap";
         }
       } else if (moisture > 0.1) {
-        if (temperature > 0.6) {
+        if (temperature > 0.7) {
           climate = "Hot Desert";
-        } else if (temperature > 0.5) {
+        } else if (temperature > 0.6) {
           climate = "Semi-Arid";
-        } else if (temperature > 0.4) {
+        } else if (temperature > 0.5) {
           climate = "Steppe";
         } else if (temperature > 0.3) {
           climate = "Continental";
@@ -926,13 +926,13 @@ class Cell implements Comparable<Cell> {
           climate = "Ice Cap";
         }
       } else if (moisture > 0.05) {
-        if (temperature > 0.6) {
+        if (temperature > 0.7) {
           climate = "Hot Desert";
-        } else if (temperature > 0.5) {
+        } else if (temperature > 0.6) {
           climate = "Semi-Arid";
-        } else if (temperature > 0.4) {
+        } else if (temperature > 0.5) {
           climate = "Steppe";
-        } else if (temperature > 0.3) {
+        } else if (temperature > 0.4) {
           climate = "Continental";
         } else if (temperature > 0.2) {
           climate = "Subarctic";
