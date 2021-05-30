@@ -29,7 +29,7 @@ float noiseDetail = 2.4;
 float noiseScale = -0.5;
 //Controls what power your noise funtion is raised to (How big the oceans are relative to the land)
 //Default: 2
-float noisePower = 1;
+float noisePower = 1.1;
 //The seed of your noise funtion. Set to 0 for a random seed;
 //NOTE: This will do nothing if autogen is on.
 int seed;
@@ -166,8 +166,8 @@ void draw () {
 
 void loadJsons(){
   json = loadJSONObject("Parameters.txt");
-  grdWidth = json.getInt("GridSize");
-  grdHeight = json.getInt("GridSize")/2;
+  grdWidth = json.getInt("GridWidth");
+  grdHeight = json.getInt("GridHeight");
   contPlates = json.getInt("ContinentalPlates");
   oceanPlates = json.getInt("OceanicPlates");
   randPlates = json.getInt("RandomPlates");
@@ -192,7 +192,6 @@ void createMaps() {
   noise = new OpenSimplexNoise(seed);
   bigNoise = noise;
   grid = new Grid(0, 0, grdWidth, grdHeight, warpL, seed, noiseDetail, noiseScale, noisePower, oceanPlates, contPlates, randPlates, randPlateChance, polPlateChance);
-  //grid = new Grid(loadImage("Earth.png"));
   println(seed);
   println("All Done!");
   noStroke();

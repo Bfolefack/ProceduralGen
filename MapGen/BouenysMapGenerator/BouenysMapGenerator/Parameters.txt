@@ -1,10 +1,11 @@
 {
-  "GridSize": 750,
-  "ContinentalPlates": 3,
-  "OceanicPlates": 2,
-  "RandomPlates": 8,
-  "RandomPlateChance": 0.4,
-  "RandomPolarPlateChance": 0.8,
+  "GridWidth": 750,
+  "GridHeight": 375,
+  "ContinentalPlates": 4,
+  "OceanicPlates": 7,
+  "RandomPlates": 10,
+  "RandomPlateChance": 0.7,
+  "RandomPolarPlateChance": 0.7,
   "AutoGen": 0,
   "Seed": 0
 }
