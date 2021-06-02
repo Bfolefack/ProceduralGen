@@ -646,7 +646,7 @@ class Cell implements Comparable<Cell> {
   }
 
   void setEarthlikeWindDirection() {
-    float jitter = (float) bigNoise.eval(xPos * 5.0/grdWidth, yPos * 5.0/grdWidth) * grdHeight/16.0;
+    float jitter = (float) bigNoise.eval(xPos * 5.0/grdWidth, yPos * 5.0/grdWidth) * grdHeight/32.0;
     if (yPos < grdHeight/6 + jitter) {
       windDir = new PVector(1, -1);
     } else if (yPos < grdHeight/6 + jitter + grdHeight/40) {
@@ -674,7 +674,7 @@ class Cell implements Comparable<Cell> {
 
   void calcFinalElevation() {
     if (noise >= 0 && noise <= 1) {
-      finalElevation = (noise + elevation)/2;
+      finalElevation = (noise + elevation)/2.0;
     } else {
       int e = 1/0;
     }
@@ -735,7 +735,7 @@ class Cell implements Comparable<Cell> {
               if (landElevation < 0) {
                 landElevation = 0;
               }
-              avgElevation += pow((landElevation), 1.75);
+              avgElevation += pow((landElevation), 1);
               landCount++;
               if (sq(landElevation) > 0.6) {
                 avgExtremeElevation += sq(landElevation);
@@ -772,8 +772,8 @@ class Cell implements Comparable<Cell> {
         lat = abs((grid.gridHeight/2) - yPos) * 2;
         lat = map(lat, 0, grid.gridHeight, 0, 90);
         if (lat <= 15) {
-          lat = map(lat, 0, 10, 1, 0);
-          moisture += (moisture + 0.1) * 0.4 * lat;
+          lat = map(lat, 0, 15, 1, 0);
+          moisture += (moisture + 0.2) * 0.4 * lat;
         }
         if (lat >= 20 && lat <= 40) {
           if (lat >= 30) {
@@ -781,7 +781,7 @@ class Cell implements Comparable<Cell> {
           } else {
             lat = map(lat, 20, 30, 0, 1);
           }
-          moisture -=  (moisture + 0.1) * 0.4 * lat;
+          moisture -=  (moisture + 0.2) * 0.4 * lat;
         }
         if (lat >= 60) {
           if (lat >= 75) {
@@ -789,7 +789,7 @@ class Cell implements Comparable<Cell> {
           } else {
             lat = map(lat, 60, 75, 0, 1);
           }
-          moisture += (moisture + 0.1) * 0.2 * lat;
+          moisture += (moisture + 0.2) * 0.2 * lat;
         }
         if (moisture > 1)
           moisture = 1;
@@ -837,7 +837,7 @@ class Cell implements Comparable<Cell> {
   void setClimate() {
     if (water == false) {
       if (moisture > 0.7) {
-        if (temperature > 0.6) {
+        if (temperature > 0.5) {
           climate = "Tropical Rainforest";
         } else if (temperature > 0.4) {
           climate = "Tropical Monsoon";
@@ -851,11 +851,11 @@ class Cell implements Comparable<Cell> {
           climate = "Tundra";
         }
       } else if (moisture > 0.6) {
-        if (temperature > 0.8) {
+        if (temperature > 0.75) {
           climate = "Tropical Rainforest";
-        } else if (temperature > 0.6) {
-          climate = "Tropical Monsoon";
         } else if (temperature > 0.5) {
+          climate = "Tropical Monsoon";
+        } else if (temperature > 0.4) {
           climate = "Tropical Savannah";
         } else if (temperature > 0.3) {
           climate = "Humid Subtropical";
@@ -867,9 +867,9 @@ class Cell implements Comparable<Cell> {
           climate = "Tundra";
         }
       } else if (moisture > 0.4) {
-        if (temperature > 0.8) {
+        if (temperature > 0.75) {
           climate = "Tropical Monsoon";
-        } else if (temperature > 0.65) {
+        } else if (temperature > 0.5) {
           climate = "Tropical Savannah";
         } else if (temperature > 0.3) {
           climate = "Humid Subtropical";
@@ -924,23 +924,11 @@ class Cell implements Comparable<Cell> {
         } else {
           climate = "Ice Cap";
         }
-      } else if (moisture > 0.1) {
-        if (temperature > 0.7) {
-          climate = "Hot Desert";
-        } else if (temperature > 0.6) {
-          climate = "Semi-Arid";
-        } else if (temperature > 0.4) {
-          climate = "Continental";
-        } else if (temperature > 0.2) {
-          climate = "Tundra";
-        } else {
-          climate = "Ice Cap";
-        }
       } else {
         if (temperature > 0.6) {
           climate = "Hot Desert";
-        } else if (temperature > 0.45) {
-          climate = "Semi-Arid";
+        } else if (temperature > 0.4) {
+          climate = "Cool Desert";
         } else if (temperature > 0.3) {
           climate = "Tundra";
         } else { 
