@@ -6,8 +6,8 @@ class Plate {
   boolean ocean;
   float infectivity;
   float angle;
-  float seaElevation = 0.2;
-  float landElevation = 0.4;
+  float seaElevation = 0.25;
+  float landElevation = 0.65;
   int xPos;
   int yPos;
   int plateID = (int) random(Integer.MIN_VALUE, Integer.MAX_VALUE);

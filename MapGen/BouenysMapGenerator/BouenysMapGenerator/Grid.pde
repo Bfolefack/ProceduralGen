@@ -33,6 +33,26 @@ public class Grid {
   JSONObject gridJson = new JSONObject();
 
   Random randy;
+  Grid() {
+    gridWidth = 500;
+    gridHeight = 500;
+    grdWidth = gridWidth;
+    grdHeight = gridHeight;
+    cells = new Cell[gridWidth][gridHeight];
+    for (int i = 0; i < gridWidth; i++) {
+      Cell[] tempCells = new Cell[gridHeight];
+      for (int j = 0; j < gridHeight; j++) {
+        tempCells[j] = new Cell(i, j);
+        tempCells[j].moisture = i/500.0;
+        tempCells[j].temperature = j/500.0;
+        tempCells[j].finalElevation = 0.5;
+        tempCells[j].setClimate();
+        tempCells[j].updateColor("Climate");
+      }
+      cells[i] = tempCells;
+    }
+  }
+
 
   Grid(String file) {
     JSONObject jj = loadJSONObject(file);
@@ -52,7 +72,7 @@ public class Grid {
         float b = brightness(img.pixels[count]);
 
         if (b > 0) {
-          b = map(pow(map(b, 0, 255, 0, 1), 0.75), 0, 1, 0.5001, 1);
+          b = map(pow(map(b, 0, 255, 0, 1), 0.5), 0, 1, 0.5001, 1);
         } else {
           b = 0;
         }

@@ -85,7 +85,7 @@ void setup () {
 }
 
 void draw () {
-  
+
   if (frameCount == 1 && autoGen == 0) {
     createMaps();
   } else if (autoGen > 0) {
@@ -100,7 +100,7 @@ void draw () {
     } else {
       exit();
     }
-  }  else {
+  } else {
     textAlign(LEFT);
     background(155);
 
@@ -129,7 +129,7 @@ void draw () {
       yPan = height/2;
       scale = 1;
     }
-    
+
     pushMatrix();
     translate(-xPan, -yPan);
     translate(width/2, height/2);
@@ -138,8 +138,8 @@ void draw () {
     popMatrix();
     fill(0);
     textSize(25);
-    text("Temperature: " + map(focusCell.temperature, 0, 1, -10, 30) + " C", 10, 25);
-    //println("Temperature: " + temperature);
+    //text("Temperature: " + map(focusCell.temperature, 0, 1, -10, 30) + " C", 10, 25);
+    text("Temperature: " + focusCell.temperature, 10, 25);    
     text("Moisture: " + map(focusCell.moisture, 0, 1, 0, 100) + "%", 10, 50);
     text("River Flow: " + (focusCell.flow * 100) + "%", 10, 75);
     if (focusCell.water == false) {
@@ -164,7 +164,7 @@ void draw () {
   }
 }
 
-void loadJsons(){
+void loadJsons() {
   json = loadJSONObject("Parameters.txt");
   grdWidth = json.getInt("GridSize");
   grdHeight = json.getInt("GridSize")/2;
@@ -191,6 +191,7 @@ void createMaps() {
   }
   noise = new OpenSimplexNoise(seed);
   bigNoise = noise;
+  //grid = new Grid();
   grid = new Grid(0, 0, grdWidth, grdHeight, warpL, seed, noiseDetail, noiseScale, noisePower, oceanPlates, contPlates, randPlates, randPlateChance, polPlateChance);
   //grid = new Grid(loadImage("Earth.png"));
   println(seed);
