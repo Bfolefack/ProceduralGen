@@ -38,6 +38,8 @@ class Cell implements Comparable<Cell> {
   float flow;
   float jitter;
 
+  Resource resource = new Resource();
+
   String climate;
   ArrayList<String> flowIDs = new ArrayList<String>();
 
@@ -60,206 +62,7 @@ class Cell implements Comparable<Cell> {
   void updateColor(String map) {
     if (ocean)
       water = true;
-    if (map.equals("Final")) {
-      float num = finalElevation;
-      if (climate.equals("Water")) {
-        if (num < .01) {
-          currColor = color(15, 50, 100);
-        } else if (num < .03) {
-          currColor = color(15, 50, 150);
-        } else  if (num < .20) {
-          currColor = color(25, 40, 200);
-        } else if (num < .3) {
-          currColor = color(25, 60, 220);
-        } else if (num < .43) {
-          currColor = color(25, 80, 220);
-        } else if (num < .5) {
-          currColor = color(60, 130, 250);
-        } else {
-          currColor = color(100, 190, 255);
-        }
-      } else if (climate.equals("Hot Desert")) {
-        if (num < .45) {
-          currColor = color(255, 210, 150);
-        } else if (num < .5) {
-          currColor = color(250, 200, 120);
-        } else if (num < .55) {
-          currColor = color(250, 190, 100);
-        } else if (num < .65) {
-          currColor = color(230, 170, 85);
-        } else if (num < .75) {
-          currColor = color(220, 160, 60);
-        } else if (num < .8) {
-          currColor = color(210, 140, 45);
-        } else if (num < .9) {
-          currColor = color(190, 110, 25);
-        } else if (num <= 1) {
-          currColor = color(160, 85, 15);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Semi-Arid")) {
-        if (num < .45) {
-          currColor = color(255, 190, 140);
-        } else if (num < .5) {
-          currColor = color(250, 180, 110);
-        } else if (num < .55) {
-          currColor = color(250, 170, 90);
-        } else if (num < .65) {
-          currColor = color(230, 150, 75);
-        } else if (num < .75) {
-          currColor = color(220, 140, 50);
-        } else if (num < .8) {
-          currColor = color(210, 135, 35);
-        } else if (num < .9) {
-          currColor = color(190, 80, 15);
-        } else if (num <= 1) {
-          currColor = color(160, 60, 10);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Tropical Savannah")) {
-        if (num < .45) {
-          currColor = color(240, 245, 120);
-        } else if (num < .5) {
-          currColor = color(225, 235, 120);
-        } else if (num < .55) {
-          currColor = color(190, 195, 100);
-        } else if (num < .65) {
-          currColor = color(185, 190, 80);
-        } else if (num < .75) {
-          currColor = color(170, 185, 60);
-        } else if (num < .8) {
-          currColor = color(165, 175, 50);
-        } else if (num < .9) {
-          currColor = color(145, 155, 40);
-        } else if (num <= 1) {
-          currColor = color(130, 140, 30);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Tropical Rainforest")) {
-        if (num < .45) {
-          currColor = color(150, 225, 120);
-        } else if (num < .5) {
-          currColor = color(135, 215, 120);
-        } else if (num < .55) {
-          currColor = color(115, 200, 100);
-        } else if (num < .65) {
-          currColor = color(95, 185, 80);
-        } else if (num < .75) {
-          currColor = color(80, 165, 60);
-        } else if (num < .8) {
-          currColor = color(70, 150, 50);
-        } else if (num < .9) {
-          currColor = color(55, 135, 40);
-        } else if (num <= 1) {
-          currColor = color(45, 115, 30);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Tropical Monsoon")) {
-        if (num < .45) {
-          currColor = color(180, 225, 120);
-        } else if (num < .5) {
-          currColor = color(165, 215, 120);
-        } else if (num < .55) {
-          currColor = color(150, 200, 100);
-        } else if (num < .65) {
-          currColor = color(140, 185, 80);
-        } else if (num < .75) {
-          currColor = color(125, 165, 60);
-        } else if (num < .8) {
-          currColor = color(95, 150, 50);
-        } else if (num < .9) {
-          currColor = color(80, 135, 40);
-        } else if (num <= 1) {
-          currColor = color(65, 115, 30);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Humid Subtropical")) {
-        if (num < .45) {
-          currColor = color(220, 255, 120);
-        } else if (num < .5) {
-          currColor = color(210, 255, 120);
-        } else if (num < .55) {
-          currColor = color(170, 235, 100);
-        } else if (num < .65) {
-          currColor = color(155, 215, 80);
-        } else if (num < .75) {
-          currColor = color(140, 200, 60);
-        } else if (num < .8) {
-          currColor = color(125, 185, 50);
-        } else if (num < .9) {
-          currColor = color(100, 175, 40);
-        } else if (num <= 1) {
-          currColor = color(90, 155, 30);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Steppe")) {
-        if (num < .45) {
-          currColor = color(255, 250, 120);
-        } else if (num < .5) {
-          currColor = color(235, 230, 110);
-        } else if (num < .55) {
-          currColor = color(225, 220, 100);
-        } else if (num < .65) {
-          currColor = color(210, 205, 80);
-        } else if (num < .75) {
-          currColor = color(200, 195, 60);
-        } else if (num < .8) {
-          currColor = color(185, 180, 50);
-        } else if (num < .9) {
-          currColor = color(175, 170, 40);
-        } else if (num <= 1) {
-          currColor = color(160, 155, 30);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Tundra")) {
-        if (num < .45) {
-          currColor = color(170, 140, 70);
-        } else if (num < .5) {
-          currColor = color(160, 130, 60);
-        } else if (num < .55) {
-          currColor = color(150, 120, 50);
-        } else if (num < .65) {
-          currColor = color(140, 110, 40);
-        } else if (num < .75) {
-          currColor = color(130, 100, 30);
-        } else if (num < .8) {
-          currColor = color(120, 90, 20);
-        } else if (num < .9) {
-          currColor = color(110, 80, 10);
-        } else if (num <= 1) {
-          currColor = color(100, 70, 0);
-        } else {
-          currColor = color(num * 255);
-        }
-      } else if (climate.equals("Ice Cap")) {
-        if (num < .45) {
-          currColor = color(235);
-        } else if (num < .5) {
-          currColor = color(220);
-        } else if (num < .55) {
-          currColor = color(205);
-        } else if (num < .65) {
-          currColor = color(190);
-        } else if (num < .75) {
-          currColor = color(175);
-        } else if (num < .8) {
-          currColor = color(160);
-        } else if (num < .9) {
-          currColor = color(145);
-        } else if (num <= 1) {
-          currColor = color(130);
-        } else {
-          currColor = color(num * 255);
-        }
-      }
-    } else if (map.equals("Elevation")) {
+    if (map.equals("Elevation")) {
       float num = finalElevation;
       if (water) {
         if (num < .01) {
@@ -423,6 +226,15 @@ class Cell implements Comparable<Cell> {
       currColor = color(divotedFinalElevation * 255);
     } else if (map.equals("Watershed")) {
       currColor = watershedColor;
+    } else if (map.equals("Resource")) {
+      currColor = resource.hue;
+      if (resource.name.equals("None")) {
+        if (water) { 
+          currColor = color(230);
+        } else {
+          currColor = color(190);
+        }
+      }
     } else if (map.equals("Climate")) {
       String str = climate;
       if (str.equals("Tropical Rainforest")) {
@@ -504,6 +316,9 @@ class Cell implements Comparable<Cell> {
       if (key == 'h') {
         updateColor("Watershed");
       }
+      if (key == 'b') {
+        updateColor("Resource");
+      }
     }
 
     fill(currColor);
@@ -580,8 +395,75 @@ class Cell implements Comparable<Cell> {
         }
       }
   }
+  int coinFlip() {
+    if (random(1) < 0.5) {
+      return -1;
+    } else {
+      return 1;
+    }
+  }
 
+  boolean propogateResource (Resource r, Grid grid) {
+    float blobSize = r.blobSize;
+    if (moisture >= r.minMoisture && moisture <= r.maxMoisture)
+      if (finalElevation >= r.minElevation && finalElevation <= r.maxElevation)
+        if (temperature >= r.minTemperature && temperature <= r.maxTemperature)
+          if ((water && r.waterResource) || (!water && r.landResource)) {
+            for (int i = (int) -blobSize; i < blobSize; i++) {
+              for (int j = (int) -blobSize; j < blobSize; j++) {
+                resource = r;
+                Cell cel = grid.getCell(xPos + i, yPos + j);
+                if (cel != null) {
+                  if (dist(xPos, yPos, xPos + i, yPos + j) < blobSize) {
+                    if ((cel.water && r.waterResource) || (!cel.water && r.landResource)) {
+                      cel.resource = r;
+                    }
+                  }
+                }
+              }
+            }
+            int big = (int) random(r.minResourceSpread, r.maxResourceSpread);
+            for (int i = 0; i < big; i++) {
+              Cell cel = grid.getCell(xPos + (int) (blobSize * coinFlip() + r.propogationDist * coinFlip()), yPos + (int) (blobSize * coinFlip() + r.propogationDist * coinFlip()));
+              if (cel != null) {
+                cel.propogateResource(r, 1, grid);
+              }
+            }
+            return true;
+          }
+    return false;
+  }
 
+  void propogateResource (Resource r, int stage, Grid grid) {
+    if (stage < r.propogationMag) {
+      float blobSize = r.blobSize/pow(r.resourceDecay, stage);
+      if (moisture >= r.minMoisture && moisture <= r.maxMoisture)
+        if (finalElevation >= r.minElevation && finalElevation <= r.maxElevation)
+          if (temperature >= r.minTemperature && temperature <= r.maxTemperature)
+            if ((water && r.waterResource) || (!water && r.landResource)) {
+              for (int i = (int) -blobSize; i < blobSize; i++) {
+                for (int j = (int) -blobSize; j < blobSize; j++) {
+                  resource = r;
+                  Cell cel = grid.getCell(xPos + i, yPos + j);
+                  if (cel != null) {
+                    if (dist(xPos, yPos, xPos + i, yPos + j) < blobSize) {
+                      if ((cel.water && r.waterResource) || (!cel.water && r.landResource)) {
+                        cel.resource = r;
+                      }
+                    }
+                  }
+                }
+              }
+              int big = (int) random(r.minResourceSpread, r.maxResourceSpread);
+              for (int i = 0; i < big; i++) {
+                Cell cel = grid.getCell(xPos + (int) (blobSize * coinFlip() + r.propogationDist * coinFlip() * (blobSize/r.blobSize)), yPos + (int) (blobSize * coinFlip() + r.propogationDist * coinFlip() * (blobSize/r.blobSize)));
+                if (cel != null) {
+                  cel.propogateResource(r, stage + 1, grid);
+                }
+              }
+            }
+    }
+  }
 
   void smoothTemp(Grid grid) {
     float total = 0;
@@ -832,7 +714,7 @@ class Cell implements Comparable<Cell> {
           climate = "Humid Subtropical";
         } else if (temperature > 0.1) {
           climate = "Subarctic";
-        }  else if (temperature > 0.05) {
+        } else if (temperature > 0.05) {
           climate = "Tundra";
         } else {
           climate = "Ice Cap";
@@ -1019,7 +901,7 @@ class Cell implements Comparable<Cell> {
         } else {
           climate = "Ice Cap";
         }
-      }  else if (moisture > 0.05) {
+      } else if (moisture > 0.05) {
         if (temperature > 0.7) {
           climate = "Hot Desert";
         } else if (temperature > 0.5) {
@@ -1036,7 +918,7 @@ class Cell implements Comparable<Cell> {
           climate = "Hot Desert";
         } else if (temperature > 0.5) {
           climate = "Semi-Arid";
-        }  else if (temperature > 0.3) {
+        } else if (temperature > 0.3) {
           climate = "Tundra";
         } else { 
           climate = "Ice Cap";

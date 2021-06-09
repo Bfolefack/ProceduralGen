@@ -70,6 +70,38 @@ float truMouseY;
 OpenSimplexNoise noise;
 OpenSimplexNoise bigNoise;
 
+Resource[] resources = {
+
+  //Resource(String n, float nM, float xM,
+  //float nE, float xE, float nT, float xT,
+  //float bS, float pD, float rA, int nRS,
+  //int mRS, int pM, float rD, boolean w,
+  //boolean l, color c)
+
+  //name = n;
+  //minMoisture = nM;
+  //maxMoisture = xM;
+  //minElevation = nE;
+  //maxElevation = xE;
+  //minTemperature = nT;
+  //maxTemperature = xT;
+  //blobSize = bS;
+  //propogationDist = pD;
+  //resourceAbundance = rA;
+  //minResourceSpread = nRS;
+  //maxResourceSpread = mRS;
+  //propogationMag = pM;
+  //resourceDecay = rD;
+  //waterResource = w;
+  //landResource = l;
+  //hue = c;
+
+  new Resource("Oil", 0, 1, 0, 0.6, 0, 1, 15, 5, 0.0001, 1, 3, 6, 1.2, true, true, color(0)), 
+  new Resource("Salt", 0, 0.3, 0, 0.6, 0.5, 1, 10, 5, 0.0009, 3, 6, 4, 1.5, false, true, color(255)),
+  new Resource("Iron", 0.0, 1.0, 0.65, 0.9, 0.0, 1.0, 10, 3, 0.0005, 3, 5, 4, 1.6, false, true, color(170, 35, 5)),
+  new Resource("Copper", 0.0, 1.0, 0.75, 0.9, 0.0, 1.0, 8, 6, 0.0003, 3, 5, 5, 1.4, false, true, color(200, 100, 0))  
+};
+
 void settings() {
   size(displayWidth - 100, displayHeight - 100);
 }
@@ -138,8 +170,8 @@ void draw () {
     popMatrix();
     fill(0);
     textSize(25);
-    //text("Temperature: " + map(focusCell.temperature, 0, 1, -10, 30) + " C", 10, 25);
-    text("Temperature: " + focusCell.temperature, 10, 25);    
+    text("Temperature: " + map(focusCell.temperature, 0, 1, -10, 30) + " C", 10, 25);
+    //text("Temperature: " + focusCell.temperature, 10, 25);    
     text("Moisture: " + map(focusCell.moisture, 0, 1, 0, 100) + "%", 10, 50);
     text("River Flow: " + (focusCell.flow * 100) + "%", 10, 75);
     if (focusCell.water == false) {
@@ -152,7 +184,7 @@ void draw () {
       text("Elevation: " + 0 + " ft", 10, 100);
     }
     text("Climate: " + focusCell.climate, 10, 125);
-    text("Color: " + red(focusCell.currColor) + ", " + green(focusCell.currColor) + ", " + blue(focusCell.currColor), 10, 150);
+    text("Resource: " + focusCell.resource.name, 10, 150);
 
     if (keyPressed && key == 's') {
       saving = true;

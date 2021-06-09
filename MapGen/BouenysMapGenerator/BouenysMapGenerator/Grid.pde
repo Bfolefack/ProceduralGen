@@ -523,7 +523,7 @@ public class Grid {
     }
     biggestLake.ocean();
     for (int i = lakes.size() - 1; i >= 0; i--) {
-      if (lakes.get(i).lake.size() < biggestLake.lake.size()/4) {
+      if (lakes.get(i).lake.size() < biggestLake.lake.size()/10) {
         lakes.remove(i).drain();
       }
     }
@@ -717,6 +717,15 @@ public class Grid {
     //  println("Creating Images");
     //  getImages();
     //}
+    println("Depositing Resources");
+    for (Resource r : resources)
+      for (int i = 0; i < gridWidth; i++) {
+        for (int j = (int)(gridHeight * 0.1); j < (int)(gridHeight * 0.9); j++) {
+          if (random(1) < r.resourceAbundance) {
+            cells[i][j].propogateResource(r, this);
+          }
+        }
+      }
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
@@ -749,6 +758,7 @@ public class Grid {
     getImage("Heightmap");
     getImage("Elevation");
     getImage("Watershed");
+    getImage("Resource");
     //getImage("Final");
     if (saveToFile) {
       println("Creating JSON");
