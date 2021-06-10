@@ -1,4 +1,4 @@
-class Resource {
+class Resource implements Comparable {
   String name;
   color hue;
   float minMoisture;
@@ -7,7 +7,8 @@ class Resource {
   float maxElevation;
   float minTemperature;
   float maxTemperature;
-  float resourceAbundance;
+  int minResourceAbundance;
+  int maxResourceAbundance;
   float blobSize;
   float propogationDist;
   float resourceDecay;
@@ -21,7 +22,7 @@ class Resource {
     waterResource = false;
     landResource = false;
   }
-  Resource(String n, float nM, float xM, float nE, float xE, float nT, float xT, float bS, float pD, float rA, int nRS, int mRS, int pM, float rD, boolean w, boolean l, color c) {
+  Resource(String n, float nM, float xM, float nE, float xE, float nT, float xT, float bS, float pD, int nRA, int mRA, int nRS, int mRS, int pM, float rD, boolean w, boolean l, color c) {
     name = n;
     minMoisture = nM;
     maxMoisture = xM;
@@ -31,7 +32,8 @@ class Resource {
     maxTemperature = xT;
     blobSize = bS;
     propogationDist = pD;
-    resourceAbundance = rA;
+    minResourceAbundance = nRA;
+    maxResourceAbundance = mRA;
     minResourceSpread = nRS;
     maxResourceSpread = mRS;
     propogationMag = pM;
@@ -39,5 +41,21 @@ class Resource {
     waterResource = w;
     landResource = l;
     hue = c;
+  }
+  
+  Resource(String n, color c) {
+    name = n;
+    hue = c;
+  }
+  
+  int compareTo(Object r) {
+    Resource re = (Resource) r;
+    if (!name.equals(re.name))
+      return 1;
+    return 0;
+  }
+  
+  String toString(){
+    return name;
   }
 }

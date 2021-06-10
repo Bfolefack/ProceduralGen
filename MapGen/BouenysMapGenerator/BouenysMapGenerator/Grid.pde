@@ -32,7 +32,7 @@ public class Grid {
 
   JSONObject gridJson = new JSONObject();
 
-  Random randy;
+  Random randy = new Random(localSeed + 1);
   Grid() {
     gridWidth = 500;
     gridHeight = 500;
@@ -168,7 +168,7 @@ public class Grid {
           blah.add(cells[j][i]);
       }
     }
-    Collections.shuffle(blah, new Random(localSeed));
+    Collections.shuffle(blah, randy);
 
     for (Cell c : blah) {
       if (c.water)
@@ -301,34 +301,6 @@ public class Grid {
       }
     }
 
-    //smallest = Integer.MAX_VALUE; 
-    //biggest = Integer.MIN_VALUE; 
-
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    if (cells[i][j].flow > biggest) {
-    //      biggest = cells[i][j].flow;
-    //    }
-    //    if (cells[i][j].flow < smallest) {
-    //      smallest = cells[i][j].flow;
-    //    }
-    //  }
-    //}
-
-    //println(smallest + ", " + biggest);
-
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    cells[i][j].flow = map(cells[i][j].flow, smallest, biggest, 0, 1);
-    //    //cells[i][j].flow = sqrt(cells[i][j].flow);
-    //  }
-    //}
-
-    //if (saveToFile) {
-    //  println("Creating Images");
-    //  getImages();
-    //}
-
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
         cells[i][j].updateColor("Elevation");
@@ -376,7 +348,7 @@ public class Grid {
         }
       }
     }
-    Collections.shuffle(shuffledCells, new Random(localSeed));
+    Collections.shuffle(shuffledCells, randy);
     println("Getting Noise");
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
@@ -558,7 +530,7 @@ public class Grid {
           blah.add(cells[j][i]);
       }
     }
-    Collections.shuffle(blah, new Random(localSeed));
+    Collections.shuffle(blah, randy);
     for (Cell c : blah) {
       if (c.water)
         c.getMoisture(this);
@@ -718,14 +690,27 @@ public class Grid {
     //  getImages();
     //}
     println("Depositing Resources");
-    for (Resource r : resources)
-      for (int i = 0; i < gridWidth; i++) {
-        for (int j = (int)(gridHeight * 0.1); j < (int)(gridHeight * 0.9); j++) {
-          if (random(1) < r.resourceAbundance) {
-            cells[i][j].propogateResource(r, this);
+    ArrayList<Cell> newShuffledCells = new ArrayList<Cell>();
+    for (int i = 0; i < gridWidth; i++) {
+      for (int j = 0; j < gridHeight; j++) {
+        newShuffledCells.add(cells[i][j]);
+      }
+    }
+    for (Resource r : resources){
+      int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance);
+      int lcount = 0;
+      println(randy);
+      Collections.shuffle(newShuffledCells, randy);
+      for(Cell c : newShuffledCells){
+        if(lcount < limit){
+          if(c.propogateResource(r, this)){
+            lcount++;
           }
+        } else {
+          break;
         }
       }
+    }
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {

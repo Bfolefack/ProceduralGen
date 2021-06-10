@@ -6,7 +6,7 @@
   "RandomPlateChance": 0.4,
   "RandomPolarPlateChance": 0.8,
   "AutoGen": 0,
-  "Seed": -0
+  "Seed": -941378304
 }
 
 ## -941378304

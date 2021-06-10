@@ -43,7 +43,7 @@ int randPlates;
 float randPlateChance;
 //Odds of the polar plates being ocean or land. 1 = Ocean. 0 = Land.
 float polPlateChance;
-
+int globalCount = 0;
 JSONObject json;
 
 //List of cool seeds:
@@ -69,37 +69,24 @@ float truMouseY;
 //Noise
 OpenSimplexNoise noise;
 OpenSimplexNoise bigNoise;
+Resource whales = new Resource("Whales", color(130, 180, 250));
 
 Resource[] resources = {
-
-  //Resource(String n, float nM, float xM,
-  //float nE, float xE, float nT, float xT,
-  //float bS, float pD, float rA, int nRS,
-  //int mRS, int pM, float rD, boolean w,
-  //boolean l, color c)
-
-  //name = n;
-  //minMoisture = nM;
-  //maxMoisture = xM;
-  //minElevation = nE;
-  //maxElevation = xE;
-  //minTemperature = nT;
-  //maxTemperature = xT;
-  //blobSize = bS;
-  //propogationDist = pD;
-  //resourceAbundance = rA;
-  //minResourceSpread = nRS;
-  //maxResourceSpread = mRS;
-  //propogationMag = pM;
-  //resourceDecay = rD;
-  //waterResource = w;
-  //landResource = l;
-  //hue = c;
-
-  new Resource("Oil", 0, 1, 0, 0.6, 0, 1, 15, 5, 0.0001, 1, 3, 6, 1.2, true, true, color(0)), 
-  new Resource("Salt", 0, 0.3, 0, 0.6, 0.5, 1, 10, 5, 0.0009, 3, 6, 4, 1.5, false, true, color(255)),
-  new Resource("Iron", 0.0, 1.0, 0.65, 0.9, 0.0, 1.0, 10, 3, 0.0005, 3, 5, 4, 1.6, false, true, color(170, 35, 5)),
-  new Resource("Copper", 0.0, 1.0, 0.75, 0.9, 0.0, 1.0, 8, 6, 0.0003, 3, 5, 5, 1.4, false, true, color(200, 100, 0))  
+  //  name,minMoisture,maxMoisture,minElevation,maxElevation,minTemperature,maxTemperature,blobSize,
+  //  propogationDist,minResourceAbundance,maxResourceAbundance,minResourceSpread,maxResourceSpread,propogationMag,
+  //  resourceDecay,waterResource,landResource,hue)
+  new Resource("Oil", 0.0, 1.0, 0.00, 1.0, 0.0, 1.0, 10, 6, 10, 20, 5, 15, 4, 1.4, true, true, color(60)), 
+  new Resource("Salt", 0.0, 0.2, 0.00, 0.6, 0.5, 1.0, 10, 15, 4, 8, 5, 10, 4, 1.5, false, true, color(255)), 
+  new Resource("Coal", 0.0, 1.0, 0.65, 0.8, 0.0, 1.0, 9, 20, 7, 12, 3, 5, 5, 1.45, false, true, color(100)), 
+  new Resource("Iron", 0.0, 1.0, 0.65, 0.9, 0.0, 1.0, 8, 16, 5, 8, 3, 5, 5, 1.5, false, true, color(170, 35, 5)), 
+  new Resource("Copper", 0.0, 1.0, 0.7, 0.9, 0.0, 1.0, 6, 12, 4, 6, 2, 5, 5, 1.7, false, true, color(200, 100, 0)), 
+  new Resource("Tin", 0.0, 1.0, 0.7, 0.9, 0.0, 1.0, 6, 12, 3, 5, 2, 5, 5, 1.7, false, true, color(140)), 
+  new Resource("Silver", 0.0, 1.0, 0.75, 0.95, 0.0, 1.0, 5, 10, 2, 4, 2, 4, 5, 1.7, false, true, color(230)), 
+  new Resource("Jade", 0.0, 1.0, 0.75, 0.95, 0.0, 1.0, 5, 10, 1, 4, 2, 4, 5, 1.7, false, true, color(0, 160, 100)), 
+  new Resource("Uranium", 0.0, 1.0, 0.85, 1.0, 0.0, 1.0, 4, 8, 1, 2, 2, 3, 5, 1.7, false, true, color(0, 255, 0)), 
+  new Resource("Gold", 0.0, 1.0, 0.85, 1.0, 0.0, 1.0, 4, 8, 1, 4, 1, 3, 5, 1.7, false, true, color(255, 215, 0)), 
+  new Resource("Platinum", 0.0, 1.0, 0.85, 1.0, 0.0, 1.0, 3, 6, 1, 2, 1, 2, 5, 1.7, false, true, color(200, 215, 235)), 
+  new Resource("Diamond", 0.0, 1.0, 0.9, 1.0, 0.0, 1.0, 3, 6, 1, 2, 1, 2, 5, 1.7, false, true, color(185, 240, 255)), 
 };
 
 void settings() {
@@ -184,7 +171,7 @@ void draw () {
       text("Elevation: " + 0 + " ft", 10, 100);
     }
     text("Climate: " + focusCell.climate, 10, 125);
-    text("Resource: " + focusCell.resource.name, 10, 150);
+    text("Resources: " + focusCell.getResources(), 10, 150);
 
     if (keyPressed && key == 's') {
       saving = true;
