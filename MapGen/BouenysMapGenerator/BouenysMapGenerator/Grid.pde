@@ -32,7 +32,7 @@ public class Grid {
 
   JSONObject gridJson = new JSONObject();
 
-  Random randy = new Random(localSeed + 1);
+  Random randy = new Random(localSeed + 12345);
   Grid() {
     gridWidth = 500;
     gridHeight = 500;
@@ -697,7 +697,7 @@ public class Grid {
       }
     }
     for (Resource r : resources){
-      int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance);
+      int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance + 1);
       int lcount = 0;
       println(randy);
       Collections.shuffle(newShuffledCells, randy);

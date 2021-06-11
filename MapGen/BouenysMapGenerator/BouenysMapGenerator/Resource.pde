@@ -17,12 +17,13 @@ class Resource implements Comparable {
   int propogationMag;
   boolean waterResource;
   boolean landResource;
+  boolean sourcing;
   Resource() {
     name = "None";
     waterResource = false;
     landResource = false;
   }
-  Resource(String n, float nM, float xM, float nE, float xE, float nT, float xT, float bS, float pD, int nRA, int mRA, int nRS, int mRS, int pM, float rD, boolean w, boolean l, color c) {
+  Resource(String n, float nM, float xM, float nE, float xE, float nT, float xT, float bS, float pD, int nRA, int mRA, int nRS, int mRS, int pM, float rD, boolean w, boolean l, boolean s, color c) {
     name = n;
     minMoisture = nM;
     maxMoisture = xM;
@@ -41,6 +42,7 @@ class Resource implements Comparable {
     waterResource = w;
     landResource = l;
     hue = c;
+    sourcing = s;
   }
   
   Resource(String n, color c) {

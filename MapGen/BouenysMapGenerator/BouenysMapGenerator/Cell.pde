@@ -26,6 +26,7 @@ class Cell implements Comparable<Cell> {
   boolean slopeClosed = false;
   boolean moistened = false;
   boolean moistShlapped = false;
+  boolean sourced = false;
 
   float noise;
   float elevation;
@@ -421,31 +422,34 @@ class Cell implements Comparable<Cell> {
     if (moisture >= r.minMoisture && moisture <= r.maxMoisture)
       if (finalElevation >= r.minElevation && finalElevation <= r.maxElevation)
         if (temperature >= r.minTemperature && temperature <= r.maxTemperature)
-          if ((water && r.waterResource) || (!water && r.landResource)) {
-            for (int i = (int) -blobSize; i < blobSize; i++) {
-              for (int j = (int) -blobSize; j < blobSize; j++) {
-                localResources.add(r);
-                resource = r;
-                Cell cel = grid.getCell(xPos + i, yPos + j);
-                if (cel != null) {
-                  if (dist(xPos, yPos, xPos + i, yPos + j) < blobSize) {
-                    if ((cel.water && r.waterResource) || (!cel.water && r.landResource)) {
-                      cel.resource = r;
-                      cel.localResources.add(r);
+          if (!sourced)
+            if ((water && r.waterResource) || (!water && r.landResource)) {
+              for (int i = (int) -blobSize; i < blobSize; i++) {
+                for (int j = (int) -blobSize; j < blobSize; j++) {
+                  localResources.add(r);
+                  resource = r;
+                  sourced = r.sourcing;
+                  Cell cel = grid.getCell(xPos + i, yPos + j);
+                  if (cel != null) {
+                    if (dist(xPos, yPos, xPos + i, yPos + j) < blobSize) {
+                      if ((cel.water && r.waterResource) || (!cel.water && r.landResource)) {
+                        cel.resource = r;
+                        cel.localResources.add(r);
+                        cel.sourced = r.sourcing;
+                      }
                     }
                   }
                 }
               }
-            }
-            int big = (int) random(r.minResourceSpread, r.maxResourceSpread);
-            for (int i = 0; i < big; i++) {
-              Cell cel = grid.getCell(xPos + (int) (blobSize * coinFlip() + r.propogationDist * coinFlip()), yPos + (int) (blobSize * coinFlip() + r.propogationDist * coinFlip()));
-              if (cel != null) {
-                cel.propogateResource(r, 1, grid);
+              int big = (int) random(r.minResourceSpread, r.maxResourceSpread);
+              for (int i = 0; i < big; i++) {
+                Cell cel = grid.getCell(xPos + (int) (random(-1, 1) * r.propogationDist), yPos + (int) (random(-1, 1) * r.propogationDist));
+                if (cel != null) {
+                  cel.propogateResource(r, 1, grid);
+                }
               }
+              return true;
             }
-            return true;
-          }
     return false;
   }
 
@@ -455,31 +459,34 @@ class Cell implements Comparable<Cell> {
       if (moisture >= r.minMoisture && moisture <= r.maxMoisture)
         if (finalElevation >= r.minElevation && finalElevation <= r.maxElevation)
           if (temperature >= r.minTemperature && temperature <= r.maxTemperature)
-            if ((water && r.waterResource) || (!water && r.landResource)) {
-              for (int i = (int) -blobSize; i < blobSize; i++) {
-                for (int j = (int) -blobSize; j < blobSize; j++) {
-                  resource = r;
-                  localResources.add(r);
-                  Cell cel = grid.getCell(xPos + i, yPos + j);
-                  if (cel != null) {
-                    if (dist(xPos, yPos, xPos + i, yPos + j) < blobSize) {
-                      if ((cel.water && r.waterResource) || (!cel.water && r.landResource)) {
-                        cel.resource = r;
-                        cel.localResources.add(r);
+            if (!sourced || resource == r)
+              if ((water && r.waterResource) || (!water && r.landResource)) {
+                for (int i = (int) -blobSize; i < blobSize; i++) {
+                  for (int j = (int) -blobSize; j < blobSize; j++) {
+                    resource = r;
+                    localResources.add(r);
+                    sourced = r.sourcing;
+                    Cell cel = grid.getCell(xPos + i, yPos + j);
+                    if (cel != null) {
+                      if (dist(xPos, yPos, xPos + i, yPos + j) < blobSize) {
+                        if ((cel.water && r.waterResource) || (!cel.water && r.landResource)) {
+                          cel.resource = r;
+                          cel.localResources.add(r);
+                          cel.sourced = r.sourcing;
+                        }
                       }
                     }
                   }
                 }
-              }
-              int big = (int) random(r.minResourceSpread, r.maxResourceSpread);
-              for (int i = 0; i < big; i = i) {
-                Cell cel = grid.getCell(xPos + (int) (random(-1, 1) * r.propogationDist), yPos + (int) (random(-1, 1) * r.propogationDist));
-                if (cel != null) {
-                  cel.propogateResource(r, stage + 1, grid);
-                  i++;
+                int big = (int) random(r.minResourceSpread, r.maxResourceSpread);
+                for (int i = 0; i < big; i = i) {
+                  Cell cel = grid.getCell(xPos + (int) (random(-1, 1) * r.propogationDist), yPos + (int) (random(-1, 1) * r.propogationDist));
+                  if (cel != null) {
+                    cel.propogateResource(r, stage + 1, grid);
+                    i++;
+                  }
                 }
               }
-            }
     }
   }
 
@@ -945,7 +952,7 @@ class Cell implements Comparable<Cell> {
     } else {
       climate = "Water";
     }
-    if(water && temperature > 0.1 && temperature < 0.4){
+    if (water && temperature > 0.1 && temperature < 0.4) {
       localResources.add(whales);
       resource = whales;
     }
