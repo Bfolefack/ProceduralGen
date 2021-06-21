@@ -52,13 +52,14 @@ void setup() {
   textAlign(CENTER);
   textSize(100);
   fill(0);
+  frameRate(120);
   //String[] yee = new String [1000000];
   //for (int i = 0; i < 1000000; i++) {
   //  yee[i] = generateWord((int) random(2, 6));
   //}
   //saveStrings("AMillionLinesOfCompleteNonsense.txt", yee);
   //exit();
-  display = generateWord((int)random(2, 6));
+  display = generateWord((int)random(2, 4));
 }
 String generateWord(int len) {
   int offset = (int)random(2);

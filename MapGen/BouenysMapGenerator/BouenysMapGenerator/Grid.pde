@@ -699,7 +699,7 @@ public class Grid {
     for (Resource r : resources){
       int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance + 1);
       int lcount = 0;
-      println(randy);
+      //println(randy);
       Collections.shuffle(newShuffledCells, randy);
       for(Cell c : newShuffledCells){
         if(lcount < limit){
