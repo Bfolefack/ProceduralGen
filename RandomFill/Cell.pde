@@ -2,6 +2,7 @@ class Cell {
   Plate plate;
   Plate neighbor;
   color col;
+  VoronoiPoint voronoi;
   boolean filled;
   boolean active;
   boolean border;
@@ -10,6 +11,7 @@ class Cell {
   int size;
   float elevation;
   float infectivity;
+  float minVoronoiDist = Integer.MAX_VALUE;
 
   Cell(int x_, int y_, int s_) {
     xPos = x_;
@@ -25,10 +27,19 @@ class Cell {
 
   void display() {
     noStroke();
+    fill(255);
     if (filled) {
       fill(plate.col);
-      rect(xPos * size, yPos * size, size, size);
+      if (border)
+        fill(0, 255, 0);
     }
+    if (key == 'e') {
+      fill(elevation * 255);
+    }
+    if (key == 'v') {
+      fill(voronoi.voCol);
+    }
+    rect(xPos * size, yPos * size, size, size);
   }
 
   void showStroke() {
@@ -40,47 +51,47 @@ class Cell {
     }
   }
 
-  void fillNeighbors(Grid grid) {
-    if (active && infectivity < random(1)) {
-      int choice = (int) random(4) + 1;
-      if (choice == 1) {
-        Cell cel = grid.getCell(xPos, yPos - 1);
-        if (!cel.filled) {
-          cel.activate(plate);
-          if (random(1) < infectivity) {
-            //cel.fillNeighbors(grid);
-          }
-        }
-      } else if (choice == 2) {
-        Cell cel = grid.getCell(xPos + 1, yPos);
-        if (!cel.filled) {
-          cel.activate(plate);
-          if (random(1) < infectivity) {
-            //cel.fillNeighbors(grid);
-          }
-        }
-      } else if (choice == 3) {
-        Cell cel = grid.getCell(xPos, yPos + 1);
-        if (!cel.filled) {
-          cel.activate(plate);
-          if (random(1) < infectivity) {
-            //cel.fillNeighbors(grid);
-          }
-        }
-      } else if (choice == 4) {
-        Cell cel = grid.getCell(xPos - 1, yPos);
-        if (!cel.filled) {
-          cel.activate(plate);
-          if (random(1) < infectivity) {
-            //cel.fillNeighbors(grid);
-          }
-        }
-      }
-      if (grid.getCell(xPos, yPos - 1).filled && grid.getCell(xPos + 1, yPos).filled && grid.getCell(xPos, yPos + 1).filled && grid.getCell(xPos - 1, yPos).filled) {
-        active = false;
-      }
-    }
-  }
+  //void fillNeighbors(Grid grid) {
+  //  if (active && infectivity < random(1)) {
+  //    int choice = (int) random(4) + 1;
+  //    if (choice == 1) {
+  //      Cell cel = grid.getCell(xPos, yPos - 1);
+  //      if (!cel.filled) {
+  //        cel.activate(plate);
+  //        if (random(1) < infectivity) {
+  //          //cel.fillNeighbors(grid);
+  //        }
+  //      }
+  //    } else if (choice == 2) {
+  //      Cell cel = grid.getCell(xPos + 1, yPos);
+  //      if (!cel.filled) {
+  //        cel.activate(plate);
+  //        if (random(1) < infectivity) {
+  //          //cel.fillNeighbors(grid);
+  //        }
+  //      }
+  //    } else if (choice == 3) {
+  //      Cell cel = grid.getCell(xPos, yPos + 1);
+  //      if (!cel.filled) {
+  //        cel.activate(plate);
+  //        if (random(1) < infectivity) {
+  //          //cel.fillNeighbors(grid);
+  //        }
+  //      }
+  //    } else if (choice == 4) {
+  //      Cell cel = grid.getCell(xPos - 1, yPos);
+  //      if (!cel.filled) {
+  //        cel.activate(plate);
+  //        if (random(1) < infectivity) {
+  //          //cel.fillNeighbors(grid);
+  //        }
+  //      }
+  //    }
+  //    if (grid.getCell(xPos, yPos - 1).filled && grid.getCell(xPos + 1, yPos).filled && grid.getCell(xPos, yPos + 1).filled && grid.getCell(xPos - 1, yPos).filled) {
+  //      active = false;
+  //    }
+  //  }
+  //}
 
   void checkBorder (Grid grid) {
     border = false;
@@ -191,18 +202,7 @@ class Cell {
     }
   }
 
-  void activate(Plate p) {
-    plate = p;
-    active = true;
-    filled = true; 
-    infectivity = p.infectivity;
-    p.cells.add(this);
-    if (p.land) {
-      elevation = 0.7;
-    } else {
-      elevation = 0.3;
-    }
-  }
+
 
   void changePlate(Plate p) {
     plate = p;
@@ -212,6 +212,21 @@ class Cell {
       elevation = 0.6;
     } else {
       elevation = 0.3;
+    }
+  }
+
+  void getVoronoiNeighbors(Grid grid) {
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
+        Cell cel = grid.getCell(xPos + i, yPos + j);
+        if (cel.size != 0) {
+          if (cel.voronoi.voCol != voronoi.voCol) {
+            if (!voronoi.neighbors.contains(cel.voronoi)) {
+              voronoi.neighbors.add(cel.voronoi);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -241,20 +256,20 @@ class Cell {
   }
 
   void getAvgEverybody(Grid grid) {
-    //boolean b = true;
-    //while(b){
-    //  int x = (int)random(-2, 10);
-    //  int y = (int)random(-2, 10);
-    //  //println((xPos + x) + "," + (yPos + y));
-    //  Cell cel = grid.getCell(xPos + x, yPos + y);
-    //  if(cel.size > 0){
-    //    elevation = cel.elevation;
-    //    b = false;
-    //  }
-    //}
+    boolean b = true;
+    while(b){
+      int x = (int)random(-2, 10);
+      int y = (int)random(-2, 10);
+      //println((xPos + x) + "," + (yPos + y));
+      Cell cel = grid.getCell(xPos + x, yPos + y);
+      if(cel.size > 0){
+        elevation = cel.elevation;
+        b = false;
+      }
+    }
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
-    for (int i = -1; i < 1; i++) {
-      for (int j = -1; j < 1; j++) {
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
         if (!(i == 0 && j == 0)) {
           //println(xPos + i, yPos + j);
           Cell cel = grid.getCell(xPos + i, yPos + j);

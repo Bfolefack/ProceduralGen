@@ -8,6 +8,7 @@ class Plate {
   int xPos;
   int yPos;
   ArrayList<Cell> cells = new ArrayList<Cell>();
+  ArrayList<VoronoiPoint> points = new ArrayList<VoronoiPoint>();
   ArrayList<Plate> neighbors = new ArrayList<Plate>();
   Plate(color c_, boolean l_, float i_, Grid g_) {
     col = c_;
@@ -33,6 +34,7 @@ class Plate {
   }
 
   void checkNeighbors() {
+    println(neighbors.size());
     if (neighbors.size() < 2) {
       for (Cell cel : cells) {
         cel.changePlate(neighbors.get(0));
