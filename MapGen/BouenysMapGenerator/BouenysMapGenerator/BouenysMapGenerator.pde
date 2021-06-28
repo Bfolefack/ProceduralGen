@@ -23,10 +23,10 @@ int grdHeight;
 int gridScale = 1;
 //Controls how jagged your coastlines are
 //Default: 2
-float noiseDetail = 2.4;
+float noiseDetail = 2.25;
 //Controls the size of all structures on your map(this one's a bit wonky)
 //Default: -0.5
-float noiseScale = -0.5;
+float noiseScale = -0.2;
 //Controls what power your noise funtion is raised to (How big the oceans are relative to the land)
 //Default: 2
 float noisePower = 1;
@@ -96,7 +96,7 @@ void settings() {
 void setup () {
   background(0);
   textSize(200);
-  textAlign(CENTER);
+  textAlign(CENTER, CENTER);
   fill(255);
   text("Loading...", width/2, height/2);
   loadJsons();

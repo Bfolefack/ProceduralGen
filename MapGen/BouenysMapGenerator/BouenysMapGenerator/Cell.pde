@@ -38,6 +38,8 @@ class Cell implements Comparable<Cell> {
   float divotedFinalElevation;
   float flow;
   float jitter;
+  float minVoronoiDist = Integer.MAX_VALUE;
+  VoronoiPoint voronoi;
 
   Resource resource = new Resource();
   TreeSet<Resource> localResources = new TreeSet<Resource>();
@@ -228,6 +230,8 @@ class Cell implements Comparable<Cell> {
       currColor = color(divotedFinalElevation * 255);
     } else if (map.equals("Watershed")) {
       currColor = watershedColor;
+    }  else if (map.equals("Voronoi")) {
+      currColor = voronoi.voCol;
     } else if (map.equals("Resource")) {
       currColor = resource.hue;
       if (resource.name.equals("None")) {
@@ -320,6 +324,9 @@ class Cell implements Comparable<Cell> {
       }
       if (key == 'b') {
         updateColor("Resource");
+      }
+      if (key == 'o') {
+        updateColor("Voronoi");
       }
     }
 
@@ -536,11 +543,16 @@ class Cell implements Comparable<Cell> {
   }
 
   void calcFinalElevation() {
+    float plateMounts = 0;
+    if(elevation > 0.75){
+      plateMounts = (elevation - 0.5) * 2;
+    }
     if (noise >= 0 && noise <= 1) {
-      finalElevation = (noise + elevation)/2.0;
+      finalElevation = (noise + elevation + pow(elevation, 2))/2.0;
     } else {
       int e = 1/0;
     }
+    //finalElevation = pow(noise, 1.5);
   }
 
   void checkElevation() {
@@ -1082,6 +1094,21 @@ class Cell implements Comparable<Cell> {
       changePlate(neighbors.get(0).plate);
     }
   }
+  
+  void getVoronoiNeighbors(Grid grid) {
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
+        Cell cel = grid.getCell(xPos + i, yPos + j);
+        if (cel.size != 0) {
+          if (cel.voronoi.voCol != voronoi.voCol) {
+            if (!voronoi.neighbors.contains(cel.voronoi)) {
+              voronoi.neighbors.add(cel.voronoi);
+            }
+          }
+        }
+      }
+    }
+  }
 
   void calculateTectonics (Grid grid) {
     if (border) {
@@ -1177,7 +1204,7 @@ class Cell implements Comparable<Cell> {
 
   void getAvgBrothers(Grid grid) {
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
-    int rad = (grid.gridWidth/1000) + 1;
+    int rad = (grid.gridWidth/500) + 1;
     for (int i = -rad; i < rad + 1; i++) {
       for (int j = -rad; j < rad + 1; j++) {
         if (!(i == 0 && j == 0)) {

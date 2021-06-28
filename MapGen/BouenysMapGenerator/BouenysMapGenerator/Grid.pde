@@ -17,6 +17,7 @@ public class Grid {
   int continentalPlates;
   int oceanicPlates;
   int randomPlates;
+  int voronoiSize = 5;
 
   PVector possibR;
 
@@ -27,6 +28,7 @@ public class Grid {
 
   ArrayList<Lake> lakes;
   ArrayList<PVector> shuffledCells;
+  ArrayList<VoronoiPoint> vps = new ArrayList<VoronoiPoint>();
 
   float[] octaves = {50, 25, 12.5, 6.25, 3.125, 2, 1, 0.5};
 
@@ -357,46 +359,52 @@ public class Grid {
         }
       }
     }
-    println("Building Plates");
-
-
-    ArrayList<Integer> yValues = new ArrayList<Integer>();
-    for (int i = 0; i < gridHeight; i++) {
-      float lat = abs((gridHeight/2) - i) * 2;
-      lat = map(lat, 0, gridHeight, 0, 1);
-      lat = pow(lat, 16);
-      lat = map(lat, 0, 1, 20, 1);
-      //println(lat);
-      for (int j = 0; j < lat; j++) {
-        yValues.add(i);
+    println("Generating Voronoi");
+    for (int i = 0; i < gridWidth/voronoiSize; i++)
+      for (int j = 0; j < gridWidth/voronoiSize; j++) {
+        vps.add(new VoronoiPoint(i * voronoiSize + (int)random(voronoiSize), j * voronoiSize + (int)random(voronoiSize), voronoiSize));
       }
+    for (VoronoiPoint vp : vps) {
+      vp.getPoints(this);
+    }
+    for (VoronoiPoint vp : vps) {
+      vp.getCells(this);
+    }
+    for (VoronoiPoint vp : vps) {
+      vp.getNeighbors(this);
     }
 
     plates = new Plate[continentalPlates + oceanicPlates + randomPlates + 2];
-
+    ArrayList<VoronoiPoint> vps2 = (ArrayList) vps.clone();
+    Collections.shuffle(vps2);
     for (int i = 0; i < plates.length - 2; i++) {
       if (i < oceanicPlates) {
-        int x = (int)random(gridWidth);
-        int y = yValues.get((int)random(yValues.size()));
         plates[i] = new Plate(color(random(255), random(255), random(255)), false, random(-0.3, 0.2), this);
-        cells[x][y].activate(plates[i]);
+        VoronoiPoint vp;
+        vp = vps2.get(i);
+        if (!vp.plateFilled) {
+          vp.activate(plates[i]);
+        }
       } else if (i < continentalPlates + oceanicPlates) {
-        int x = (int)random(gridWidth);
-        int y = yValues.get((int)random(yValues.size()));
         plates[i] = new Plate(color(random(255), random(255), random(255)), true, random(-0.1, 0.4), this);
-        cells[x][y].activate(plates[i]);
+        VoronoiPoint vp;
+        vp = vps2.get(i);
+        if (!vp.plateFilled) {
+          vp.activate(plates[i]);
+        }
       } else {
-        int x = (int)random(gridWidth);
-        int y = yValues.get((int)random(yValues.size()));
         boolean b;
         if (random(1) < randomPlateChance) {
           b = false;
         } else {
           b = true;
         }
-
         plates[i] = new Plate(color(random(255), random(255), random(255)), b, random(0.5, 0.7), this);
-        cells[x][y].activate(plates[i]);
+        VoronoiPoint vp;
+        vp = vps2.get(i);
+        if (!vp.plateFilled) {
+          vp.activate(plates[i]);
+        }
       }
     }
 
@@ -407,9 +415,11 @@ public class Grid {
       b = true;
     }
 
-    plates[plates.length - 2] = new Plate(color(random(255), random(255), random(255)), b, random(0.2, 0.4), this);
-    for (int i = 0; i < gridWidth; i++) {
-      cells[i][0].activate(plates[plates.length - 2]);
+    plates[plates.length - 2] = new Plate(color(random(255), random(255), random(255)), b, random(0.4, 0.7), this);
+    for (VoronoiPoint vp : vps) {
+      if (vp.yPos <= voronoiSize) {
+        vp.activate(plates[plates.length - 2]);
+      }
     }
 
     if (random(1) < polarPlateChance) {
@@ -418,10 +428,13 @@ public class Grid {
       b = true;
     }
 
-    plates[plates.length - 1] = new Plate(color(random(255), random(255), random(255)), b, random(0.2, 0.4), this);
-    for (int i = 0; i < gridWidth; i++) {
-      cells[i][gridHeight - 1].activate(plates[plates.length - 1]);
+    plates[plates.length - 1] = new Plate(color(random(255), random(255), random(255)), b, random(0.4, 0.7), this);
+    for (VoronoiPoint vp : vps) {
+      if (vp.yPos >= gridHeight - voronoiSize) {
+        vp.activate(plates[plates.length - 1]);
+      }
     }
+    println("Building Plates");
 
     while (!bordersChecked) {
       update();
@@ -495,7 +508,7 @@ public class Grid {
     }
     biggestLake.ocean();
     for (int i = lakes.size() - 1; i >= 0; i--) {
-      if (lakes.get(i).lake.size() < biggestLake.lake.size()/10) {
+      if (lakes.get(i).lake.size() < biggestLake.lake.size()/20) {
         lakes.remove(i).drain();
       }
     }
@@ -658,7 +671,7 @@ public class Grid {
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
         cells[i][j].flow = map(cells[i][j].flow, smallest, biggest, 0, 1);
-        cells[i][j].flow = sqrt(cells[i][j].flow);
+        cells[i][j].flow = pow(cells[i][j].flow, 0.5);
       }
     }
 
@@ -696,14 +709,14 @@ public class Grid {
         newShuffledCells.add(cells[i][j]);
       }
     }
-    for (Resource r : resources){
+    for (Resource r : resources) {
       int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance + 1);
       int lcount = 0;
       //println(randy);
       Collections.shuffle(newShuffledCells, randy);
-      for(Cell c : newShuffledCells){
-        if(lcount < limit){
-          if(c.propogateResource(r, this)){
+      for (Cell c : newShuffledCells) {
+        if (lcount < limit) {
+          if (c.propogateResource(r, this)) {
             lcount++;
           }
         } else {
@@ -927,18 +940,21 @@ public class Grid {
   void update() {
     if (plateBuilding) {
       plateBuilding = false;
-      //println("Shuffling");
-      //Collections.shuffle(shuffledCells, new Random(localSeed + (int) random(30)));
-      //println("Done Shuffling");
-      for (PVector p : shuffledCells) {
-        Cell cel = getCell((int) p.x, (int) p.y);
-        cel.fillNeighbors(this);
-        if (!cel.filled) {
-          plateBuilding = true;
+      for (int i = 0; i < vps.size(); i++) {
+        VoronoiPoint vp = vps.get(i);
+        float lat = abs((gridHeight/2) - vp.yPos) * 2;
+        lat = map(lat, 0, gridHeight, 0, 1);
+        lat = pow(lat, 8);
+        lat = map(lat, 0, 1, 1, 5);
+        for (int k = 0; k < (int) lat; k++) {
+          if (vp.active) {
+            plateBuilding = true;
+            vp.fillNeighbors();
+          }
         }
       }
     } else if (!bordersChecked) {
-      println("Checking Plate borders");
+      println("checking borders");
       for (int i = 0; i < gridWidth; i++) {
         for (int j = 0; j < gridHeight; j++) {
           cells[i][j].checkBorder(this);
