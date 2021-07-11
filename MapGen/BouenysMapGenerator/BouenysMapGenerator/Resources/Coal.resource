@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 20,
+  "Color": -10197916,
+  "Blocking": false,
+  "MinimumElevation": 0.6499999761581421,
+  "MaximumElevation": 0.800000011920929,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 1.4500000476837158,
+  "MinimumResourceAbundance": 7,
+  "LandResource": true,
+  "MinimumResourceSpread": 4,
+  "Name": "Coal",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 4,
+  "MaximumResourceAbundance": 12,
+  "BlobSize": 9,
+  "MaximumResourceSpread": 6
+}

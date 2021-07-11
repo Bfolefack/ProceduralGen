@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 6,
+  "Color": -12829636,
+  "Blocking": false,
+  "MinimumElevation": 0,
+  "MaximumElevation": 1,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 1.399999976158142,
+  "MinimumResourceAbundance": 10,
+  "LandResource": true,
+  "MinimumResourceSpread": 5,
+  "Name": "Oil",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": true,
+  "PropogationMultiplier": 4,
+  "MaximumResourceAbundance": 20,
+  "BlobSize": 10,
+  "MaximumResourceSpread": 15
+}

@@ -41,23 +41,69 @@ class Resource implements Comparable {
     resourceDecay = rD;
     waterResource = w;
     landResource = l;
-    hue = c;
     sourcing = s;
+    hue = c;
+  }
+  
+  Resource(JSONObject jj) {
+    name = jj.getString("Name");
+    minMoisture = jj.getFloat("MinimumMoisture");
+    maxMoisture = jj.getFloat("MaximumMoisture");
+    minElevation = jj.getFloat("MinimumElevation");
+    maxElevation = jj.getFloat("MaximumElevation");
+    minTemperature = jj.getFloat("MinimumTemperature");
+    maxTemperature = jj.getFloat("MaximumTemperature");
+    blobSize = jj.getFloat("BlobSize");
+    propogationDist = jj.getFloat("PropogationDistance");
+    minResourceAbundance = jj.getInt("MinimumResourceAbundance");
+    maxResourceAbundance = jj.getInt("MaximumResourceAbundance");
+    minResourceSpread = jj.getInt("MinimumResourceSpread");
+    maxResourceSpread = jj.getInt("MaximumResourceSpread");
+    propogationMag = jj.getInt("PropogationMultiplier");
+    resourceDecay = jj.getFloat("PropogationSizeDecay");
+    waterResource = jj.getBoolean("WaterResource");
+    landResource = jj.getBoolean("LandResource");
+    sourcing = jj.getBoolean("Blocking");
+    hue = jj.getInt("Color");
   }
   
   Resource(String n, color c) {
     name = n;
     hue = c;
   }
-  
+
   int compareTo(Object r) {
     Resource re = (Resource) r;
     if (!name.equals(re.name))
       return 1;
     return 0;
   }
-  
-  String toString(){
+
+  String toString() {
     return name;
   }
+
+  void saveJSON() {
+    JSONObject resource = new JSONObject();
+    resource.setString("Name", name);
+    resource.setFloat("MinimumMoisture", minMoisture);
+    resource.setFloat("MaximumMoisture", maxMoisture);
+    resource.setFloat("MinimumElevation", minElevation);
+    resource.setFloat("MaximumElevation", maxElevation);
+    resource.setFloat("MinimumTemperature", minTemperature);
+    resource.setFloat("MaximumTemperature", maxTemperature);
+    resource.setFloat("BlobSize", blobSize);
+    resource.setFloat("PropogationDistance", propogationDist);
+    resource.setInt("MinimumResourceAbundance", minResourceAbundance);
+    resource.setInt("MaximumResourceAbundance", maxResourceAbundance);
+    resource.setInt("MinimumResourceSpread", minResourceSpread);
+    resource.setInt("MaximumResourceSpread", maxResourceSpread);
+    resource.setInt("PropogationMultiplier", propogationMag);
+    resource.setFloat("PropogationSizeDecay", resourceDecay);
+    resource.setBoolean("WaterResource", waterResource);
+    resource.setBoolean("LandResource", landResource);
+    resource.setBoolean("Blocking", sourcing);
+    resource.setInt("Color", hue);
+     saveJSONObject(resource, "Resources/" + name + ".resource");
+   }
 }

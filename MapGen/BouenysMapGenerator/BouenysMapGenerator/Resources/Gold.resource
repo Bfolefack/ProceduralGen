@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 10,
+  "Color": -10496,
+  "Blocking": true,
+  "MinimumElevation": 0.8500000238418579,
+  "MaximumElevation": 1,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 2,
+  "MinimumResourceAbundance": 2,
+  "LandResource": true,
+  "MinimumResourceSpread": 2,
+  "Name": "Gold",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 3,
+  "MaximumResourceAbundance": 4,
+  "BlobSize": 3,
+  "MaximumResourceSpread": 4
+}

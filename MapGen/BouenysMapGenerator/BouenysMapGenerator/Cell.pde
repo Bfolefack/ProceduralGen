@@ -36,6 +36,7 @@ class Cell implements Comparable<Cell> {
   float temperature;
   float ice;
   float divotedFinalElevation;
+  float rawFlow;
   float flow;
   float jitter;
   float minVoronoiDist = Integer.MAX_VALUE;
@@ -45,7 +46,6 @@ class Cell implements Comparable<Cell> {
   TreeSet<Resource> localResources = new TreeSet<Resource>();
 
   String climate;
-  ArrayList<String> flowIDs = new ArrayList<String>();
 
   Cell(int x_, int y_) {
     xPos = x_;
@@ -81,8 +81,10 @@ class Cell implements Comparable<Cell> {
           currColor = color(25, 80, 220);
         } else if (num < .5) {
           currColor = color(60, 130, 250);
-        } else {
+        } else if (num < .6) {
           currColor = color(100, 190, 255);
+        } else {
+          currColor = color(170, 230, 255);
         }
       } else { 
         if (num < .45) {
@@ -112,7 +114,7 @@ class Cell implements Comparable<Cell> {
       }
     } else if (map.equals("Divoted")) {
       float num = divotedFinalElevation;
-      if (water) {
+      if (ocean) {
         if (num < .01) {
           currColor = color(15, 50, 100);
         } else if (num < .03) {
@@ -220,8 +222,10 @@ class Cell implements Comparable<Cell> {
     } else if (map.equals("Moisture")) {
       currColor = color(255 - moisture * 255, 255 - moisture * 255, 255);
     } else if (map.equals("River")) {
-      if (!ocean)
+      if (!water)
         currColor = color(255 - flow * 255, 255 - flow * 255, 255);
+      else if (!ocean)
+        currColor = color(255 - lake.trueGreatestFlow * 255, 255 - lake.trueGreatestFlow * 255, 255);
       else
         currColor = color(0, 0, 255);
     } else if (map.equals("Heightmap")) {
@@ -230,51 +234,59 @@ class Cell implements Comparable<Cell> {
       currColor = color(divotedFinalElevation * 255);
     } else if (map.equals("Watershed")) {
       currColor = watershedColor;
-    }  else if (map.equals("Voronoi")) {
+    } else if (map.equals("Voronoi")) {
       currColor = voronoi.voCol;
     } else if (map.equals("Resource")) {
       currColor = resource.hue;
       if (resource.name.equals("None")) {
-        if (water) { 
+        if (ocean) { 
           currColor = color(230);
         } else {
           currColor = color(190);
         }
       }
+    } else if (map.equals("Lake")) {
+      updateColor("Elevation");
+      if (laked)
+        currColor = lake.col;
+      if (ocean) 
+        currColor = color(0, 0, 255);
     } else if (map.equals("Climate")) {
       String str = climate;
-      if (str.equals("Tropical Rainforest")) {
-        currColor = color(0, 0, 255);
-      } else if (str.equals("Tropical Monsoon")) {
-        currColor = color(60, 125, 255);
-      } else if (str.equals("Tropical Savannah")) {
-        currColor = color(120, 150, 255);
-      } else if (str.equals("Hot Desert")) {
-        currColor = color(255, 0, 0);
-      } else if (str.equals("Semi-Arid")) {
-        currColor = color(255, 175, 0);
-      } else if (str.equals("Cool Desert")) {
-        currColor = color(255, 145, 145);
-      } else if (str.equals("Steppe")) {
-        currColor = color(255, 225, 85);
-      } else if (str.equals("Humid Subtropical")) {
-        currColor = color(165, 255, 25);
-      } else if (str.equals("Subtropical Monsoon")) {
-        currColor = color(65, 255, 125);
-      } else if (str.equals("Mediterranean")) {
-        currColor = color(225, 255, 0);
-      } else if (str.equals("Mediterranean")) {
-        currColor = color(225, 255, 0);
-      } else if (str.equals("Oceanic")) {
-        currColor = color(0, 255, 0);
-      } else if (str.equals("Continental")) {
-        currColor = color(125, 200, 255);
-      } else if (str.equals("Subarctic")) {
-        currColor = color(0, 125, 150);
-      } else if (str.equals("Tundra")) {
-        currColor = color(200);
-      } else if (str.equals("Ice Cap")) {
-        currColor = color(125);
+      if (!water) {
+        if (str.equals("Tropical Rainforest")) {
+          currColor = color(0, 0, 255);
+        } else if (str.equals("Tropical Monsoon")) {
+          currColor = color(60, 125, 255);
+        } else if (str.equals("Tropical Savannah")) {
+          currColor = color(120, 150, 255);
+        } else if (str.equals("Hot Desert")) {
+          currColor = color(255, 0, 0);
+        } else if (str.equals("Semi-Arid")) {
+          currColor = color(255, 175, 0);
+        } else if (str.equals("Cool Desert")) {
+          currColor = color(255, 145, 145);
+        } else if (str.equals("Steppe")) {
+          currColor = color(255, 225, 85);
+        } else if (str.equals("Humid Subtropical")) {
+          currColor = color(165, 255, 25);
+        } else if (str.equals("Subtropical Monsoon")) {
+          currColor = color(65, 255, 125);
+        } else if (str.equals("Mediterranean")) {
+          currColor = color(225, 255, 0);
+        } else if (str.equals("Mediterranean")) {
+          currColor = color(225, 255, 0);
+        } else if (str.equals("Oceanic")) {
+          currColor = color(0, 255, 0);
+        } else if (str.equals("Continental")) {
+          currColor = color(125, 200, 255);
+        } else if (str.equals("Subarctic")) {
+          currColor = color(0, 125, 150);
+        } else if (str.equals("Tundra")) {
+          currColor = color(200);
+        } else if (str.equals("Ice Cap")) {
+          currColor = color(125);
+        }
       } else {
         currColor = color(255);
       }
@@ -286,64 +298,53 @@ class Cell implements Comparable<Cell> {
 
   void display() {
     if (keyPressed) {
-      if (key == 'p') {
+      switch (key) {
+      case 'p':
         updateColor("Plates");
-      }
-      if (key == 'n') {
-        updateColor("Noise");
-      }
-      if (key == 'e') {
+        break;
+      case 'e':
         updateColor("Elevation");
-      }
-      if (key == 'c') {
+        break;
+      case 'n':
+        updateColor("Noise");
+        break;
+      case 'c':
         updateColor("Climate");
-      }
-      if (key == 't') {
+        break;
+      case 't':
         updateColor("Temperature");
-      }
-      if (key == 'm') {
+        break;
+      case 'm':
         updateColor("Moisture");
-      }
-      if (key == 'h') {
+        break;
+      case 'h':
         updateColor("Heightmap");
-      }
-      if (key == 'd') {
+        break;
+      case 'd':
         updateColor("Divoted");
-      }
-      if (key == 'v') {
+        break;
+      case 'v':
         updateColor("DivotedHeightmap");
-      }
-      if (key == 'y') {
+        break;
+      case 'y':
         updateColor("River");
-      } 
-      if (key == 'f') {
-        //updateColor("Final");
-      }
-      if (key == 'h') {
+        break;
+      case 'u':
         updateColor("Watershed");
-      }
-      if (key == 'b') {
+        break;
+      case 'b':
         updateColor("Resource");
-      }
-      if (key == 'o') {
+        break;
+      case 'o':
         updateColor("Voronoi");
+        break;
+      case 'l':
+        updateColor("Lake");
+        break;
       }
     }
 
     fill(currColor);
-    if (key == 'l') {
-      if (laked) {
-        fill(lake.col);
-        //println("yee");
-      }
-      if (ocean) {
-        fill(0, 0, 255);
-        //println("yee");
-      }
-    } 
-    if (key == 't') {
-      fill(255, 255 - temperature * 255, 255 - temperature * 255);
-    }
     if (key == 'w') {
       if (windDir.x == -1) {
         fill(color(0, 0, 255));
@@ -367,7 +368,7 @@ class Cell implements Comparable<Cell> {
   }
   void flowRiver(Grid grid) {
     if (!ocean && !lowestNeighbor.ocean) {
-      watershedColor = lowestNeighbor.flowRiver(grid, sq(moisture) * pow((finalElevation - 0.5) * 2, 4), 1);
+      watershedColor = lowestNeighbor.flowRiver(grid, sq(moisture) * pow((finalElevation - 0.5) * 2, 2), 1);
     } else if (ocean) {
       watershedColor = color(255);
     }
@@ -375,10 +376,10 @@ class Cell implements Comparable<Cell> {
 
   color flowRiver(Grid grid, float propogation, int count) {   
     if (!ocean && !lowestNeighbor.ocean) {
-      flow += propogation;
+      rawFlow += propogation;
       return lowestNeighbor.flowRiver(grid, propogation, count + 1);
     } else if (!ocean) {
-      flow += propogation;
+      rawFlow += propogation;
       return watershedColor;
     }
     return 0;
@@ -409,6 +410,27 @@ class Cell implements Comparable<Cell> {
       return -1;
     } else {
       return 1;
+    }
+  }
+
+  void smoothLake(Grid grid) {
+    int total = 0;
+    for (int i = -1; i < 2; i++) {
+      for (int j = -1; j < 2; j++) {
+        if (!(i == 0 && j == 0)) {
+          Cell cel = grid.getCell(xPos + i, yPos + j);
+          if (cel.size != 0) {
+            if (cel.water) {
+              total++;
+            }
+          }
+        }
+      }
+    }
+    if (total < 3) {
+      water = false;
+    } else if (total > 5) {
+      water = true;
     }
   }
 
@@ -543,12 +565,8 @@ class Cell implements Comparable<Cell> {
   }
 
   void calcFinalElevation() {
-    float plateMounts = 0;
-    if(elevation > 0.75){
-      plateMounts = (elevation - 0.5) * 2;
-    }
     if (noise >= 0 && noise <= 1) {
-      finalElevation = (noise + elevation + pow(elevation, 2))/2.0;
+      finalElevation = (noise + elevation + (0.33 * pow(elevation, 2)))/2.0;
     } else {
       int e = 1/0;
     }
@@ -727,9 +745,9 @@ class Cell implements Comparable<Cell> {
       if (moisture > 0.9) {
         if (temperature > 0.6) {
           climate = "Tropical Rainforest";
-        } else if (temperature > 0.5) {
+        } else if (temperature > 0.525) {
           climate = "Tropical Monsoon";
-        } else if (temperature > 0.4) {
+        } else if (temperature > 0.5) {
           climate = "Tropical Savannah";
         } else if (temperature > 0.3) {
           climate = "Humid Subtropical";
@@ -745,7 +763,7 @@ class Cell implements Comparable<Cell> {
           climate = "Tropical Rainforest";
         } else if (temperature > 0.5) {
           climate = "Tropical Monsoon";
-        } else if (temperature > 0.4) {
+        } else if (temperature > 0.5) {
           climate = "Tropical Savannah";
         } else if (temperature > 0.3) {
           climate = "Humid Subtropical";
@@ -1094,7 +1112,7 @@ class Cell implements Comparable<Cell> {
       changePlate(neighbors.get(0).plate);
     }
   }
-  
+
   void getVoronoiNeighbors(Grid grid) {
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
@@ -1142,7 +1160,7 @@ class Cell implements Comparable<Cell> {
         if (!plate.land) {
           //Oceanic-Continental
           if (totalCollision > 0) {
-            elevation += totalCollision * -0.07;
+            elevation += totalCollision * 0.07;
           } else {
             elevation += 0;
           }
@@ -1151,7 +1169,7 @@ class Cell implements Comparable<Cell> {
           if (totalCollision > 0) {
             elevation += totalCollision * 0.3;
           } else {
-            elevation += abs(totalCollision) * 0.1;
+            elevation += totalCollision * 0.1;
           }
         }
       } else if (!plate.land) {
@@ -1166,10 +1184,9 @@ class Cell implements Comparable<Cell> {
         if (totalCollision > 0) {
           elevation += totalCollision * 0.4;
         } else {
-          elevation += totalCollision * 0.1;
+          elevation += totalCollision * 0.15;
         }
       }
-
       //if (elevation > 1)
       //  elevation = 1; 
       //if (elevation < 0)
@@ -1229,17 +1246,6 @@ class Cell implements Comparable<Cell> {
   }
 
   void getAvgEverybody(Grid grid) {
-    //boolean b = true;
-    //while(b){
-    //  int x = (int)random(-2, 10);
-    //  int y = (int)random(-2, 10);
-    //  //println((xPos + x) + "," + (yPos + y));
-    //  Cell cel = grid.getCell(xPos + x, yPos + y);
-    //  if(cel.size > 0){
-    //    elevation = cel.elevation;
-    //    b = false;
-    //  }
-    //}
     ArrayList<Cell> neighbors = new ArrayList<Cell>(); 
     for (int i = -1; i < 2; i++) {
       for (int j = -1; j < 2; j++) {
@@ -1256,7 +1262,8 @@ class Cell implements Comparable<Cell> {
     for (Cell c : neighbors) {
       total += c.elevation;
     }
-    elevation = total/neighbors.size(); 
+    elevation = total/neighbors.size();
+    elevation += (bigNoise.eval(xPos * 0.5, yPos * 0.5) + bigNoise.eval(xPos, yPos))/2 * 0.01;
     if (elevation > 1)
       elevation = 1; 
     if (elevation < 0)

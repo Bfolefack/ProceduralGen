@@ -26,7 +26,7 @@ int gridScale = 1;
 float noiseDetail = 2.25;
 //Controls the size of all structures on your map(this one's a bit wonky)
 //Default: -0.5
-float noiseScale = -0.2;
+float noiseScale = -0.5;
 //Controls what power your noise funtion is raised to (How big the oceans are relative to the land)
 //Default: 2
 float noisePower = 1;
@@ -71,34 +71,23 @@ OpenSimplexNoise noise;
 OpenSimplexNoise bigNoise;
 Resource whales = new Resource("Whales", color(130, 180, 250));
 
-Resource[] resources = {
-  //  name,minMoisture,maxMoisture,minElevation,maxElevation,minTemperature,maxTemperature,blobSize,
-  //  propogationDist,minResourceAbundance,maxResourceAbundance,minResourceSpread,maxResourceSpread,propogationMag,
-  //  resourceDecay,waterResource,landResource,hue)
-  new Resource("Oil", 0.0, 1.0, 0.00, 1.0, 0.0, 1.0, 10, 6, 10, 20, 5, 15, 4, 1.4, true, true, false, color(60)), 
-  new Resource("Salt", 0.0, 0.2, 0.00, 0.6, 0.5, 1.0, 10, 15, 4, 8, 5, 10, 4, 1.5, false, true, false, color(255)), 
-  new Resource("Coal", 0.0, 1.0, 0.65, 0.8, 0.0, 1.0, 9, 20, 7, 12, 4, 6, 4, 1.45, false, true, false, color(100)), 
-  new Resource("Iron", 0.0, 1.0, 0.65, 0.9, 0.0, 1.0, 8, 16, 6, 9, 4, 6, 4, 1.5, false, true, true, color(170, 35, 5)), 
-  new Resource("Copper", 0.0, 1.0, 0.7, 0.9, 0.0, 1.0, 6, 12, 4, 6, 3, 5, 4, 1.7, false, true, true, color(200, 100, 0)), 
-  new Resource("Tin", 0.0, 1.0, 0.7, 0.9, 0.0, 1.0, 6, 12, 3, 5, 3, 5, 4, 1.7, false, true, true, color(140)), 
-  new Resource("Silver", 0.0, 1.0, 0.75, 0.95, 0.0, 1.0, 5, 10, 2, 4, 2, 5, 4, 1.7, false, true, true, color(230)), 
-  new Resource("Jade", 0.0, 1.0, 0.75, 0.95, 0.0, 1.0, 5, 10, 2, 3, 2, 5, 4, 1.7, false, true, true, color(0, 160, 100)), 
-  new Resource("Uranium", 0.0, 1.0, 0.85, 1.0, 0.0, 1.0, 4, 8, 2, 3, 2, 4, 4, 1.7, false, true, true, color(0, 255, 0)), 
-  new Resource("Gold", 0.0, 1.0, 0.85, 1.0, 0.0, 1.0, 4, 8, 2, 3, 2, 4, 4, 1.7, false, true, true, color(255, 215, 0)), 
-  new Resource("Platinum", 0.0, 1.0, 0.85, 1.0, 0.0, 1.0, 3, 6, 1, 2, 2, 3, 4, 1.7, false, true, true, color(150, 215, 235)), 
-  new Resource("Diamond", 0.0, 1.0, 0.9, 1.0, 0.0, 1.0, 3, 6, 1, 2, 2, 3, 4, 1.7, false, true, true, color(0, 255, 255)), 
-};
-
+Resource[] resources;
 void settings() {
   size(displayWidth - 100, displayHeight - 100);
 }
 
 void setup () {
   background(0);
-  textSize(200);
+  textSize(100);
   textAlign(CENTER, CENTER);
   fill(255);
   text("Loading...", width/2, height/2);
+  String[] raw = loadStrings("RawResources.txt");
+  resources = new Resource[raw.length];
+  for (int i = 0; i < raw.length; i++) {
+    JSONObject jj = loadJSONObject("Resources/" + raw[i] + ".resource");
+    resources[i] = new Resource(jj);
+  }
   loadJsons();
   delay(5);
 }
@@ -161,7 +150,8 @@ void draw () {
     //text("Temperature: " + focusCell.temperature, 10, 25);    
     text("Moisture: " + map(focusCell.moisture, 0, 1, 0, 100) + "%", 10, 50);
     text("River Flow: " + (focusCell.flow * 100) + "%", 10, 75);
-    if (focusCell.water == false) {
+    //text("River Flow: " + focusCell.rawFlow, 10, 75);
+    if (focusCell.ocean == false) {
       if (focusCell.finalElevation > 0.5) {
         text("Elevation: " + map(sq((focusCell.finalElevation - 0.5) * 2), 0, 1, 0, 8000) + " ft", 10, 100);
       } else {
@@ -176,9 +166,10 @@ void draw () {
     if (keyPressed && key == 's') {
       saving = true;
       background(0);
-      textSize(200);
+      textSize(100);
+      textAlign(CENTER, CENTER);
       fill(255);
-      text("Saving...", width/2 - 500, height/2);
+      text("Saving...", width/2, height/2);
     }
   }
 }
@@ -213,7 +204,7 @@ void createMaps() {
   //grid = new Grid();
   grid = new Grid(0, 0, grdWidth, grdHeight, warpL, seed, noiseDetail, noiseScale, noisePower, oceanPlates, contPlates, randPlates, randPlateChance, polPlateChance);
   //grid = new Grid(loadImage("Earth.png"));
-  println(seed);
+  //println(seed);
   println("All Done!");
   noStroke();
   xPan = width/2;

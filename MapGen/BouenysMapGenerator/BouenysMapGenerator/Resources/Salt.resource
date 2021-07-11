@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 15,
+  "Color": -1,
+  "Blocking": false,
+  "MinimumElevation": 0,
+  "MaximumElevation": 0.5,
+  "MaximumMoisture": 0.20000000298023224,
+  "PropogationSizeDecay": 1.5,
+  "MinimumResourceAbundance": 4,
+  "LandResource": true,
+  "MinimumResourceSpread": 5,
+  "Name": "Salt",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 4,
+  "MaximumResourceAbundance": 8,
+  "BlobSize": 10,
+  "MaximumResourceSpread": 10
+}

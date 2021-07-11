@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 8,
+  "Color": -6891541,
+  "Blocking": true,
+  "MinimumElevation": 0.8500000238418579,
+  "MaximumElevation": 1,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 1.7000000476837158,
+  "MinimumResourceAbundance": 1,
+  "LandResource": true,
+  "MinimumResourceSpread": 2,
+  "Name": "Platinum",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 3,
+  "MaximumResourceAbundance": 3,
+  "BlobSize": 3,
+  "MaximumResourceSpread": 3
+}

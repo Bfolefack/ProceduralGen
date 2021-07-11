@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 12,
+  "Color": -7566196,
+  "Blocking": true,
+  "MinimumElevation": 0.699999988079071,
+  "MaximumElevation": 0.8999999761581421,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 1.7000000476837158,
+  "MinimumResourceAbundance": 3,
+  "LandResource": true,
+  "MinimumResourceSpread": 2,
+  "Name": "Tin",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 3,
+  "MaximumResourceAbundance": 6,
+  "BlobSize": 5,
+  "MaximumResourceSpread": 5
+}

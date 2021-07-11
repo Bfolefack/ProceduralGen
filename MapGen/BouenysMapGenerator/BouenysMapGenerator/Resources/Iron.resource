@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 14,
+  "Color": -5627131,
+  "Blocking": true,
+  "MinimumElevation": 0.6499999761581421,
+  "MaximumElevation": 0.8999999761581421,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 2,
+  "MinimumResourceAbundance": 6,
+  "LandResource": true,
+  "MinimumResourceSpread": 2,
+  "Name": "Iron",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 3,
+  "MaximumResourceAbundance": 10,
+  "BlobSize": 6,
+  "MaximumResourceSpread": 8
+}

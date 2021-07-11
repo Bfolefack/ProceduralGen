@@ -47,11 +47,33 @@ public class Grid {
         tempCells[j] = new Cell(i, j);
         tempCells[j].moisture = i/500.0;
         tempCells[j].temperature = j/500.0;
-        tempCells[j].finalElevation = 0.5;
+        tempCells[j].finalElevation = i/500.0;
         tempCells[j].setClimate();
         tempCells[j].updateColor("Climate");
       }
       cells[i] = tempCells;
+    }
+    ArrayList<Cell> newShuffledCells = new ArrayList<Cell>();
+    for (int i = 0; i < gridWidth; i++) {
+      for (int j = 0; j < gridHeight; j++) {
+        newShuffledCells.add(cells[i][j]);
+      }
+    }
+    println(resources);
+    for (Resource r : resources) {
+      int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance + 1);
+      int lcount = 0;
+      //println(randy);
+      Collections.shuffle(newShuffledCells, randy);
+      for (Cell c : newShuffledCells) {
+        if (lcount < limit) {
+          if (c.propogateResource(r, this)) {
+            lcount++;
+          }
+        } else {
+          break;
+        }
+      }
     }
   }
 
@@ -286,11 +308,11 @@ public class Grid {
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
-        if (cells[i][j].flow > biggest) {
-          biggest = cells[i][j].flow;
+        if (cells[i][j].rawFlow > biggest) {
+          biggest = cells[i][j].rawFlow;
         }
         if (cells[i][j].flow < smallest) {
-          smallest = cells[i][j].flow;
+          smallest = cells[i][j].rawFlow;
         }
       }
     }
@@ -298,7 +320,7 @@ public class Grid {
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
-        cells[i][j].flow = map(cells[i][j].flow, smallest, biggest, 0, 1);
+        cells[i][j].flow = map(cells[i][j].rawFlow, smallest, biggest, 0, 1);
         cells[i][j].flow = sqrt(cells[i][j].flow);
       }
     }
@@ -376,7 +398,7 @@ public class Grid {
 
     plates = new Plate[continentalPlates + oceanicPlates + randomPlates + 2];
     ArrayList<VoronoiPoint> vps2 = (ArrayList) vps.clone();
-    Collections.shuffle(vps2);
+    Collections.shuffle(vps2, randy);
     for (int i = 0; i < plates.length - 2; i++) {
       if (i < oceanicPlates) {
         plates[i] = new Plate(color(random(255), random(255), random(255)), false, random(-0.3, 0.2), this);
@@ -508,14 +530,10 @@ public class Grid {
     }
     biggestLake.ocean();
     for (int i = lakes.size() - 1; i >= 0; i--) {
-      if (lakes.get(i).lake.size() < biggestLake.lake.size()/20) {
-        lakes.remove(i).drain();
+      if (lakes.get(i).lake.size() < biggestLake.lake.size()/4) {
+        lakes.get(i).drain();
       }
     }
-    for (Lake l : lakes) {
-      l.ocean();
-    }
-
     println("Getting Temperature");
 
     for (int i = 0; i < gridWidth; i++) {
@@ -586,18 +604,6 @@ public class Grid {
 
     println("Forming Rivers");
     PriorityQueue<Cell> open = new PriorityQueue<Cell>();
-    //for (int i = 0; i < gridWidth; i++) {
-    //  open.add(cells[i][0]);
-    //  cells[i][0].slopeClosed = true;
-    //  open.add(cells[i][gridHeight - 1]);
-    //  cells[i][gridHeight - 1].slopeClosed = true;
-    //}
-    //for (int i = 0; i < gridHeight; i++) {
-    //  open.add(cells[0][i]);
-    //  cells[0][i].slopeClosed = true;
-    //  open.add(cells[gridWidth - 1][i]);
-    //  cells[gridWidth - 1][i].slopeClosed = true;
-    //}
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
@@ -609,31 +615,26 @@ public class Grid {
     }
 
     int count = 0;
+    Lake activeLake = new Lake();
     while (open.size() > 0) {
       Cell c = open.remove();
       c.slopeNeighbors(c.divotedFinalElevation, open, this);
+      if (c.finalElevation < c.divotedFinalElevation) {
+        activeLake.add(c);
+      } else {
+        if (activeLake.lake.size() > 0) {
+          lakes.add(activeLake);
+          activeLake = new Lake();
+        }
+      }
       count++;
     }
     println(count);
-
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    cells[i][j].getLowestNeighbor(this);
-    //  }
-    //}
-
-    //ArrayList<Cell> highCells = new ArrayList<Cell>();
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    if (cells[i][j].finalElevation >= 0.7 && cells[i][j].finalElevation < 0.9) {
-    //      highCells.add(cells[i][j]);
-    //    }
-    //  }
-    //}
-
-    //for (int i = 0; i < 50; i++) {
-    //  highCells.remove((int) random(50)).flowRiver(this);
-    //}
+    for (int i = lakes.size() - 1; i >= 0; i--) {
+      if (lakes.get(i).lake.size() < 1) {
+        lakes.remove(i);
+      }
+    }
 
     PriorityQueue<Cell> riverCells = new PriorityQueue<Cell>(Collections.reverseOrder());
     for (int i = 0; i < gridWidth; i++) {
@@ -658,11 +659,11 @@ public class Grid {
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
-        if (cells[i][j].flow > biggest) {
-          biggest = cells[i][j].flow;
+        if (cells[i][j].rawFlow > biggest) {
+          biggest = cells[i][j].rawFlow;
         }
-        if (cells[i][j].flow < smallest) {
-          smallest = cells[i][j].flow;
+        if (cells[i][j].rawFlow < smallest) {
+          smallest = cells[i][j].rawFlow;
         }
       }
     }
@@ -670,38 +671,23 @@ public class Grid {
 
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
-        cells[i][j].flow = map(cells[i][j].flow, smallest, biggest, 0, 1);
+        cells[i][j].flow = map(cells[i][j].rawFlow, 0, biggest, 0, 1);
         cells[i][j].flow = pow(cells[i][j].flow, 0.5);
       }
     }
 
-    //smallest = Integer.MAX_VALUE; 
-    //biggest = Integer.MIN_VALUE; 
-
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    if (cells[i][j].flow > biggest) {
-    //      biggest = cells[i][j].flow;
-    //    }
-    //    if (cells[i][j].flow < smallest) {
-    //      smallest = cells[i][j].flow;
-    //    }
-    //  }
-    //}
-
-    //println(smallest + ", " + biggest);
-
-    //for (int i = 0; i < gridWidth; i++) {
-    //  for (int j = 0; j < gridHeight; j++) {
-    //    cells[i][j].flow = map(cells[i][j].flow, smallest, biggest, 0, 1);
-    //    //cells[i][j].flow = sqrt(cells[i][j].flow);
-    //  }
-    //}
-
-    //if (saveToFile) {
-    //  println("Creating Images");
-    //  getImages();
-    //}
+    println("Filling Lakes");
+    for (Lake l : lakes) {
+      l.calculateLakeFill();
+    }
+    for (Lake l : lakes) {
+      l.flood();
+    }
+    for (int i = 0; i < 10; i++) {
+      for (Lake l : lakes) {
+        l.smoothLake(this);
+      }
+    }
     println("Depositing Resources");
     ArrayList<Cell> newShuffledCells = new ArrayList<Cell>();
     for (int i = 0; i < gridWidth; i++) {
@@ -709,6 +695,7 @@ public class Grid {
         newShuffledCells.add(cells[i][j]);
       }
     }
+    println(resources);
     for (Resource r : resources) {
       int limit = (int) random(r.minResourceAbundance, r.maxResourceAbundance + 1);
       int lcount = 0;

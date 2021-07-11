@@ -1,12 +1,13 @@
 {
   "GridSize": 750,
   "ContinentalPlates": 3,
-  "OceanicPlates": 4,
-  "RandomPlates": 6,
+  "OceanicPlates": 3,
+  "RandomPlates": 5,
   "RandomPlateChance": 0.4,
   "RandomPolarPlateChance": 0.8,
   "AutoGen":0,
-  "Seed": -941378304
+  "Seed": 0
 }
 
-## -941378304
+## 1503808256
+## 1198467840

@@ -1,0 +1,12 @@
+Oil
+Salt
+Coal
+Iron
+Copper
+Tin
+Jade
+Silver
+Gold
+Uranium
+Platinum
+Diamond

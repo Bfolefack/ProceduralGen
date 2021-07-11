@@ -1,0 +1,21 @@
+{
+  "MinimumTemperature": 0,
+  "PropogationDistance": 8,
+  "Color": -16711936,
+  "Blocking": true,
+  "MinimumElevation": 0.75,
+  "MaximumElevation": 1,
+  "MaximumMoisture": 1,
+  "PropogationSizeDecay": 2,
+  "MinimumResourceAbundance": 2,
+  "LandResource": true,
+  "MinimumResourceSpread": 2,
+  "Name": "Uranium",
+  "MaximumTemperature": 1,
+  "MinimumMoisture": 0,
+  "WaterResource": false,
+  "PropogationMultiplier": 4,
+  "MaximumResourceAbundance": 5,
+  "BlobSize": 4,
+  "MaximumResourceSpread": 4
+}
