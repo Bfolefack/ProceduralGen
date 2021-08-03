@@ -149,7 +149,7 @@ void draw () {
     text("Temperature: " + map(focusCell.temperature, 0, 1, -10, 30) + " C", 10, 25);
     //text("Temperature: " + focusCell.temperature, 10, 25);    
     text("Moisture: " + map(focusCell.moisture, 0, 1, 0, 100) + "%", 10, 50);
-    text("River Flow: " + (focusCell.flow * 100) + "%", 10, 75);
+    text("River Flow: " + (focusCell.getFlow() * 100) + "%", 10, 75);
     //text("River Flow: " + focusCell.rawFlow, 10, 75);
     if (focusCell.ocean == false) {
       if (focusCell.finalElevation > 0.5) {

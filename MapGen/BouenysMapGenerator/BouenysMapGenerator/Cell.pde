@@ -445,6 +445,15 @@ class Cell implements Comparable<Cell> {
     s = s.substring(0, s.length() - 2);
     return s;
   }
+  
+  float getFlow(){
+    if (!water)
+        return flow;
+      else if (!ocean)
+        return lake.trueGreatestFlow;
+      else
+        return 0;
+  }
 
   boolean propogateResource (Resource r, Grid grid) {
     float blobSize = r.blobSize;
