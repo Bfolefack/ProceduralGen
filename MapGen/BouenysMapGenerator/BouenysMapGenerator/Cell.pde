@@ -1230,7 +1230,7 @@ class Cell implements Comparable<Cell> {
 
   void getAvgBrothers(Grid grid) {
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
-    int rad = (grid.gridWidth/500) + 1;
+    int rad = 1;
     for (int i = -rad; i < rad + 1; i++) {
       for (int j = -rad; j < rad + 1; j++) {
         if (!(i == 0 && j == 0)) {

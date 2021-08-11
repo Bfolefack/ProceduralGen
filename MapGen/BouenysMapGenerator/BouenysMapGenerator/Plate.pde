@@ -6,7 +6,7 @@ class Plate {
   boolean ocean;
   float infectivity;
   float angle;
-  float seaElevation = 0.3;
+  float seaElevation = 0.25;
   float landElevation = 0.63;
   int xPos;
   int yPos;
