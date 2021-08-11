@@ -445,14 +445,14 @@ class Cell implements Comparable<Cell> {
     s = s.substring(0, s.length() - 2);
     return s;
   }
-  
-  float getFlow(){
+
+  float getFlow() {
     if (!water)
-        return flow;
-      else if (!ocean)
-        return lake.trueGreatestFlow;
-      else
-        return 0;
+      return flow;
+    else if (!ocean)
+      return lake.trueGreatestFlow;
+    else
+      return 0;
   }
 
   boolean propogateResource (Resource r, Grid grid) {
@@ -575,7 +575,7 @@ class Cell implements Comparable<Cell> {
 
   void calcFinalElevation() {
     if (noise >= 0 && noise <= 1) {
-      finalElevation = (noise + elevation + (0.33 * pow(elevation, 2)))/2.0;
+      finalElevation = (noise + elevation + (0.5 * pow(elevation, 2)))/2.0;
     } else {
       int e = 1/0;
     }
@@ -650,7 +650,8 @@ class Cell implements Comparable<Cell> {
 
   void getMoisture(Grid grid) {
     float lat = abs((grid.gridHeight/2) - yPos) * 2;
-    lat = map(lat, 0, grid.gridHeight, 0, 0.9);
+    lat = pow(map(lat, 0, grid.gridHeight, 0, 1), 4);
+    lat = map(lat, 0, 1, 0, 0.8);
     if (water == true) {
       moisture = (temperature);
       //println(moisture);
@@ -664,8 +665,8 @@ class Cell implements Comparable<Cell> {
         float avgTemperature = 0;
         int count = 1;
         int landCount = 1;
-        for (int i = 0; i <  grid.gridWidth * ((lat) + 0.1); i++) {
-          Cell cel = grid.getCell(xPos + (int)(i * windDir.x), yPos + (int)(i * (windDir.y/2)) + ((int)(bigNoise.eval((xPos + (int)(i * windDir.x)) * 0.05, yPos * 0.05) * grid.gridHeight/32)));
+        for (int i = 0; i <  grid.gridWidth * ((lat) + 0.2); i++) {
+          Cell cel = grid.getCell(xPos + (int)(i * windDir.x), yPos + (int)(i * (windDir.y/4)) + ((int)(bigNoise.eval((xPos + (int)(i * windDir.x)) * 0.05, yPos * 0.05) * grid.gridHeight/32)));
           if (cel.size > 0) {
             if (cel.water) {
               waterPercentage += sqrt(cel.moisture);
