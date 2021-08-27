@@ -5,7 +5,7 @@ String[][] consonemes = {
   {"f", "ph", "lf", "gh"}, // F
   {"g", "gh", "gu", "gue"}, // G
   {"h", "wh"}, // H
-  {"j", "ge", "g", "dge", "di"}, // J
+  {"j", "ge", "g", "dr", "dge", "di"}, // J
   {"k", "c", "ck", "ch", "q", "x", "lk"}, // K
   {"l", "ll"}, // L
   {"m", "mn", "lm", "mb"}, // M
@@ -53,11 +53,13 @@ void setup() {
   textSize(100);
   fill(0);
   frameRate(120);
-  //String[] yee = new String [1000000];
-  //for (int i = 0; i < 1000000; i++) {
-  //  yee[i] = generateWord((int) random(2, 6));
+  //String[] yee = new String [10000000];
+  //for (int i = 0; i < 10000000; i++) {
+  //  if (i % 1000 == 0)
+  //    println(i);
+  //  yee[i] = generateWord((int) random(2, 7));
   //}
-  //saveStrings("AMillionLinesOfCompleteNonsense.txt", yee);
+  //saveStrings("TenMillionLinesOfCompleteNonsense.txt", yee);
   //exit();
   display = generateWord((int)random(2, 4));
 }
