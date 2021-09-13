@@ -650,7 +650,7 @@ class Cell implements Comparable<Cell> {
 
   void getMoisture(Grid grid) {
     float lat = abs((grid.gridHeight/2) - yPos) * 2;
-    lat = pow(map(lat, 0, grid.gridHeight, 0, 1), 4);
+    lat = pow(map(lat, 0, grid.gridHeight, 0, 1), 2);
     lat = map(lat, 0, 1, 0, 0.8);
     if (water == true) {
       moisture = (temperature);
@@ -789,7 +789,7 @@ class Cell implements Comparable<Cell> {
           climate = "Tropical Rainforest";
         } else if (temperature > 0.65) {
           climate = "Tropical Monsoon";
-        } else if (temperature > 0.4) {
+        } else if (temperature > 0.5) {
           climate = "Tropical Savannah";
         } else if (temperature > 0.35) {
           climate = "Humid Subtropical";
@@ -1128,6 +1128,7 @@ class Cell implements Comparable<Cell> {
       for (int j = -1; j < 2; j++) {
         Cell cel = grid.getCell(xPos + i, yPos + j);
         if (cel.size != 0) {
+          //println(voronoi.voCol);
           if (cel.voronoi.voCol != voronoi.voCol) {
             if (!voronoi.neighbors.contains(cel.voronoi)) {
               voronoi.neighbors.add(cel.voronoi);
@@ -1231,7 +1232,7 @@ class Cell implements Comparable<Cell> {
 
   void getAvgBrothers(Grid grid) {
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
-    int rad = 1;
+    int rad = grid.gridWidth/1000 + 1;
     for (int i = -rad; i < rad + 1; i++) {
       for (int j = -rad; j < rad + 1; j++) {
         if (!(i == 0 && j == 0)) {
@@ -1257,8 +1258,9 @@ class Cell implements Comparable<Cell> {
 
   void getAvgEverybody(Grid grid) {
     ArrayList<Cell> neighbors = new ArrayList<Cell>(); 
-    for (int i = -1; i < 2; i++) {
-      for (int j = -1; j < 2; j++) {
+    int rad = grid.gridWidth/1000 + 1;
+    for (int i = -rad; i <= rad; i++) {
+      for (int j = -rad; j <= rad; j++) {
         if (!(i == 0 && j == 0)) {
           //println(xPos + i, yPos + j);
           Cell cel = grid.getCell(xPos + i, yPos + j); 
@@ -1273,7 +1275,10 @@ class Cell implements Comparable<Cell> {
       total += c.elevation;
     }
     elevation = total/neighbors.size();
-    elevation += (bigNoise.eval(xPos * 0.5, yPos * 0.5) + bigNoise.eval(xPos, yPos))/2 * 0.01;
+    float tempX = xPos;
+    float tempY = yPos;
+    //if(elevation > 0.45 && elevation < 0.55)
+      //elevation += (bigNoise.eval(xPos * 0.1 + seed, yPos * 0.1 + seed)  + bigNoise.eval(xPos * 0.5 + seed, yPos * 0.5 + seed) * 0.5 + bigNoise.eval(xPos + seed, yPos + seed) * 0.1) * 0.05;
     if (elevation > 1)
       elevation = 1; 
     if (elevation < 0)

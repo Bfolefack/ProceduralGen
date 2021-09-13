@@ -6,8 +6,8 @@ class Plate {
   boolean ocean;
   float infectivity;
   float angle;
-  float seaElevation = 0.25;
-  float landElevation = 0.63;
+  float seaElevation = 0.3;
+  float landElevation = 0.6;
   int xPos;
   int yPos;
   int plateID = (int) random(Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -37,7 +37,7 @@ class Plate {
   }
 
   void checkNeighbors() {
-    if (neighbors.size() < 2 && neighbors.size() > 0) {
+    if (neighbors.size() < 1 && neighbors.size() > 0) {
       for (Cell cel : cells) {
         cel.changePlate(neighbors.get(0));
       }

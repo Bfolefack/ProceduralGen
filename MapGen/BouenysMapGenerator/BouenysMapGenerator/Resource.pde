@@ -65,6 +65,7 @@ class Resource implements Comparable {
     landResource = jj.getBoolean("LandResource");
     sourcing = jj.getBoolean("Blocking");
     hue = jj.getInt("Color");
+    blobSize = (blobSize * grdWidth)/750;
   }
   
   Resource(String n, color c) {

@@ -18,7 +18,6 @@ public class Grid {
   int oceanicPlates;
   int randomPlates;
   int voronoiSize = 5;
-
   PVector possibR;
 
   boolean plateBuilding = true;
@@ -399,33 +398,44 @@ public class Grid {
     plates = new Plate[continentalPlates + oceanicPlates + randomPlates + 2];
     ArrayList<VoronoiPoint> vps2 = (ArrayList) vps.clone();
     Collections.shuffle(vps2, randy);
-    for (int i = 0; i < plates.length - 2; i++) {
-      if (i < oceanicPlates) {
-        plates[i] = new Plate(color(random(255), random(255), random(255)), false, random(-0.3, 0.2), this);
+    int oc  = 0;
+    int lnd = 0;
+    int rnd = 0;
+    for (int i = 0;oc + lnd + rnd < plates.length - 2;) {
+      if (oc < oceanicPlates) {
         VoronoiPoint vp;
         vp = vps2.get(i);
         if (!vp.plateFilled) {
+          plates[i] = new Plate(color(random(255), random(255), random(255)), false, random(-0.3, 0.2), this);
           vp.activate(plates[i]);
+          oc++;
+          i++;
         }
-      } else if (i < continentalPlates + oceanicPlates) {
-        plates[i] = new Plate(color(random(255), random(255), random(255)), true, random(-0.1, 0.4), this);
+      } 
+      if (lnd < continentalPlates) {
         VoronoiPoint vp;
         vp = vps2.get(i);
         if (!vp.plateFilled) {
+          plates[i] = new Plate(color(random(255), random(255), random(255)), true, random(-0.1, 0.4), this);
           vp.activate(plates[i]);
+          lnd++;
+          i++;
         }
-      } else {
+      } 
+      if (rnd < randomPlates) {
         boolean b;
         if (random(1) < randomPlateChance) {
           b = false;
         } else {
           b = true;
         }
-        plates[i] = new Plate(color(random(255), random(255), random(255)), b, random(0.5, 0.7), this);
         VoronoiPoint vp;
         vp = vps2.get(i);
         if (!vp.plateFilled) {
+          plates[i] = new Plate(color(random(255), random(255), random(255)), b, random(0.5, 0.7), this);
           vp.activate(plates[i]);
+          rnd++;
+          i++;
         }
       }
     }
@@ -932,7 +942,7 @@ public class Grid {
         float lat = abs((gridHeight/2) - vp.yPos) * 2;
         lat = map(lat, 0, gridHeight, 0, 1);
         lat = pow(lat, 8);
-        lat = map(lat, 0, 1, 1, 5);
+        lat = map(lat, 0, 1, 1, 1);
         for (int k = 0; k < (int) lat; k++) {
           if (vp.active) {
             plateBuilding = true;

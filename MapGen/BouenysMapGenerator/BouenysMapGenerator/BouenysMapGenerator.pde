@@ -82,12 +82,6 @@ void setup () {
   textAlign(CENTER, CENTER);
   fill(255);
   text("Loading...", width/2, height/2);
-  String[] raw = loadStrings("RawResources.txt");
-  resources = new Resource[raw.length];
-  for (int i = 0; i < raw.length; i++) {
-    JSONObject jj = loadJSONObject("Resources/" + raw[i] + ".resource");
-    resources[i] = new Resource(jj);
-  }
   loadJsons();
   delay(5);
 }
@@ -185,6 +179,12 @@ void loadJsons() {
   autoGen = json.getInt("AutoGen");
   randPlateChance = json.getFloat("RandomPlateChance");
   polPlateChance = json.getFloat("RandomPolarPlateChance");
+  String[] raw = loadStrings("RawResources.txt");
+  resources = new Resource[raw.length];
+  for (int i = 0; i < raw.length; i++) {
+    JSONObject jj = loadJSONObject("Resources/" + raw[i] + ".resource");
+    resources[i] = new Resource(jj);
+  }
 }
 
 void createMaps() {

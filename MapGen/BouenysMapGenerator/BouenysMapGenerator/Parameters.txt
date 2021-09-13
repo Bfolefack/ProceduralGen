@@ -1,6 +1,6 @@
 {
-  "GridSize": 750,
-  "ContinentalPlates": 3,
+  "GridSize": 1000,
+  "ContinentalPlates": 5,
   "OceanicPlates": 3,
   "RandomPlates": 5,
   "RandomPlateChance": 0.4,
