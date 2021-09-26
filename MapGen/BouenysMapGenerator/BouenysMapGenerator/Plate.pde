@@ -4,10 +4,12 @@ class Plate {
   boolean land;
   boolean active;
   boolean ocean;
+  boolean showDirectionLine;
   float infectivity;
   float angle;
   float seaElevation = 0.3;
   float landElevation = 0.6;
+  PVector size = new PVector();
   int xPos;
   int yPos;
   int plateID = (int) random(Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -34,6 +36,21 @@ class Plate {
     }
     xPos = (int) (xTotal/ (float) cells.size());
     yPos = (int) (yTotal/ (float) cells.size());
+  }
+
+  void display() {
+    if (cells.size() > 0) {
+      xPos = cells.get(0).xPos;
+      yPos =cells.get(0).yPos;
+      if (showDirectionLine) {
+        fill(0, 255, 0);
+        ellipse(xPos, yPos, 5, 5);
+        stroke(0, 255, 0);
+        strokeWeight(3);
+        line(xPos, yPos, xPos + cos(angle) * 20, yPos + sin(angle) * 20);
+        noStroke();
+      }
+    }
   }
 
   void checkNeighbors() {
