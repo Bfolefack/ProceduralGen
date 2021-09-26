@@ -371,7 +371,7 @@ public class Grid {
         }
       }
     }
-    Collections.shuffle(shuffledCells, randy);
+    Collections.shuffle(shuffledCells, new Random(seed));
     println("Getting Noise");
     for (int i = 0; i < gridWidth; i++) {
       for (int j = 0; j < gridHeight; j++) {
@@ -397,11 +397,11 @@ public class Grid {
 
     plates = new Plate[continentalPlates + oceanicPlates + randomPlates + 2];
     ArrayList<VoronoiPoint> vps2 = (ArrayList) vps.clone();
-    Collections.shuffle(vps2, randy);
+    Collections.shuffle(vps2, new Random(seed + 1000));
     int oc  = 0;
     int lnd = 0;
     int rnd = 0;
-    for (int i = 0;oc + lnd + rnd < plates.length - 2;) {
+    for (int i = 0; oc + lnd + rnd < plates.length - 2; ) {
       if (oc < oceanicPlates) {
         VoronoiPoint vp;
         vp = vps2.get(i);
@@ -909,14 +909,26 @@ public class Grid {
     //}
 
     //stroke(0);
-
-    for (int i = 0; i < gridWidth; i++) {
-      line(xPos + gridScale * i, yPos, xPos + gridScale * i, yPos + gridHeight * gridScale);
+    for (Plate p : plates) {
+      p.display();
+    }
+    if (keyPressed & key == 'p') {
+      for (Plate p : plates) {
+        p.showDirectionLine = true;
+      }
+    } else if (keyPressed & key != 'p') {
+      for (Plate p : plates) {
+        p.showDirectionLine = false;
+      }
     }
 
-    for (int i = 0; i < gridHeight; i++) {
-      line(xPos, yPos + gridScale * i, xPos + gridWidth * gridScale, yPos + gridScale * i);
-    }
+    //for (int i = 0; i < gridWidth; i++) {
+    //  line(xPos + gridScale * i, yPos, xPos + gridScale * i, yPos + gridHeight * gridScale);
+    //}
+
+    //for (int i = 0; i < gridHeight; i++) {
+    //  line(xPos, yPos + gridScale * i, xPos + gridWidth * gridScale, yPos + gridScale * i);
+    //}
 
     //rectMode(CORNERS);
     //fill(0);
