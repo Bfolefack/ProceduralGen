@@ -1,8 +1,8 @@
 float gridScale;
 Grid griddle;
 void setup () {
-  size(800, 600);
-  gridScale = 5;
+  fullScreen();
+  gridScale = 8;
   background(0);
   textSize(200);
   text("Loading...", width/2 - 400, height/2);
@@ -16,4 +16,9 @@ void draw () {
   background(150);
   griddle.update();
   griddle.display();
+}
+
+void keyPressed(){
+  if(key == 's')
+    saveFrame("data/####.png");
 }

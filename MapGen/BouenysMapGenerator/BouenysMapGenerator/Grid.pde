@@ -744,17 +744,23 @@ public class Grid {
 
   void getImages() {
     println("Creating Images");
-    getImage("Noise");
-    getImage("Plates");
-    getImage("Temperature");
-    getImage("Moisture");
-    getImage("Climate");
-    getImage("River");
+    PImage noise = getImage("Noise");
+    PImage plates = getImage("Plates");
+    PImage temperature = getImage("Temperature");
+    PImage moisture = getImage("Moisture");
+    PImage climate = getImage("Climate");
+    PImage river = getImage("River");
     getImage("Heightmap");
-    getImage("Elevation");
-    getImage("Watershed");
-    getImage("Resource");
+    PImage elevation = getImage("Elevation");
+    PImage watershed = getImage("Watershed");
+    PImage resource = getImage("Resource");
     //getImage("Final");
+    PImage[] images = new PImage[]{elevation, noise, plates, climate, moisture, temperature, river, watershed};
+    PImage merge = createImage(gridWidth, gridHeight * images.length, RGB);
+    for(int i = 0; i < images.length; i++){
+      merge.copy(images[i], 0, 0, gridWidth, gridHeight, 0, gridHeight * i, gridWidth, gridHeight);
+    }
+    merge.save("Maps/" + warpLevel + "/"+ gridWidth + "x" + gridHeight + "/" + seed +"/" + seed + ".png");
     if (saveToFile) {
       println("Creating JSON");
       saveJSON();

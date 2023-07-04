@@ -1,10 +1,10 @@
 {
   "GridSize": 1000,
-  "ContinentalPlates": 4,
-  "OceanicPlates": 5,
+  "ContinentalPlates": 5,
+  "OceanicPlates": 3,
   "RandomPlates": 5,
   "RandomPlateChance": 0.4,
-  "RandomPolarPlateChance": 1,
+  "RandomPolarPlateChance":1,
   "AutoGen":0,
   "Seed": 0
 }

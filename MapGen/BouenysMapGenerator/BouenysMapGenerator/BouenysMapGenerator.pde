@@ -176,6 +176,10 @@ void loadJsons() {
   oceanPlates = json.getInt("OceanicPlates");
   randPlates = json.getInt("RandomPlates");
   seed = json.getInt("Seed");
+  if(seed == 0){
+    seed = (int)random(Integer.MIN_VALUE, Integer.MAX_VALUE);
+  }
+  println(seed);
   autoGen = json.getInt("AutoGen");
   randPlateChance = json.getFloat("RandomPlateChance");
   polPlateChance = json.getFloat("RandomPolarPlateChance");

@@ -13,7 +13,7 @@ class Cell {
 
   Cell(int x_, int y_) {
     gridPos = new PVector(x_, y_);
-    if (random(0, 1) < .43) {
+    if ((noise(x_ * 0.1, y_ * 0.1)) + random(-0.5, 0.5) < .4) {
       filled = true;
     } else {
       filled = false;

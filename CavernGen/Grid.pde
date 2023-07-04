@@ -21,10 +21,12 @@ class Grid {
     
     smoothCavern();
     
-    
+    int count = 0;
     while(true){
       caverns();
-      if(caverns.size() <= 1){
+      count++;
+      println(count);
+      if(caverns.size() <= 1 || count > 100){
         break;
       }
       resetGrid();
@@ -88,8 +90,9 @@ class Grid {
   }
   
   void caverns(){
-    
+    int count = 0;
      while(true){
+        count++;
         if(!createCaverns()){
           break;
         }
@@ -102,7 +105,7 @@ class Grid {
     ArrayList<Cavern> cavernsToBeRemoved = new ArrayList<Cavern>();
     
     for(Cavern c: caverns){
-      if(c.myCells.size() < 30){
+      if(c.myCells.size() < 10){
         c.fillIn();
         cavernsToBeRemoved.add(c);
       }
@@ -116,6 +119,7 @@ class Grid {
     for(Cavern c: caverns){
       c.getNearestLine(Cells);
     } 
+    
     ArrayList<Cell> erodingCells = new ArrayList<Cell>();
     for(Cavern c: caverns){
       ArrayList<Cell> tempCells = c.getErosionCells(Cells);
